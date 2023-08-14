@@ -100,6 +100,20 @@ app.get("/users/:username", (req, res)=>{
     })
 })
 
+
+//a post request on this route when the user is logged in will give him all his info.
+//does not require any form input.
+app.post('/users/profile', authenticateToken, (req, res)=>{
+    User.findOne({username: req.username})
+    .then((foundUser)=>{
+        if (foundUser){
+            res.json(foundUser);
+        } else {
+            res.send("Unable to find user.");
+        }
+    }).catch(()=>{res.send("Error retrieving profile.")})
+})
+
 //logged in user trying to update his username.
 app.patch('/users/profile/username', authenticateToken, (req, res) => {
       User.findOne({username: req.username})
@@ -125,6 +139,29 @@ app.patch('/users/profile/username', authenticateToken, (req, res) => {
   });
 
 
+  app.patch('/users/profile/password', authenticateToken, (req, res) => {
+    User.findOne({username: req.username})
+    .then((user)=>{
+        console.log(user);
+      const {password} = req.body;
+      bcrypt.compare(password, user.password).then(function(result) {
+        if (result){
+            res.send("Can't update to the same password.");
+        } else {
+            bcrypt.hash(password, saltRounds)
+            .then((hash)=>{      
+                User.updateOne({username: user.username}, {password: hash})
+                .then(()=>{res.send("Successfully updated user's password.")})
+                .catch(()=>{res.send("Error occurred while updated password.")})
+            })
+            .catch(()=>{res.send("Error occurred while comparing passwords.")});
+        }
+    });
+    })
+  .catch ((error)=> {
+    res.status(500).json({ error: 'Error retrieving user profile' });
+  })
+});
 
 function authenticateToken(req, res, next) {
     const authHeader = req.headers.authorization
