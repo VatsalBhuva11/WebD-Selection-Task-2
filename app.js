@@ -70,7 +70,7 @@ app.post("/users/login", (req, res)=>{
             bcrypt.compare(password, foundUser.password).then(function(result) {
                 if (result){
                     const token = jwt.sign({ username: username }, process.env.SECRET_KEY);
-                    res.json({ token });
+                    res.json({ token }); //get hold of token here and use it as authorization header value for further requests
                 } else {
                     res.send("Incorrect password!");
                 }
@@ -100,15 +100,31 @@ app.get("/users/:username", (req, res)=>{
     })
 })
 
-//visiting own profile when logged in.
-app.post('/users/profile', authenticateToken, async (req, res) => {
-    try {
-      const user = await User.findOne({username: req.username});
-      res.json(user);
-    } catch (error) {
+//logged in user trying to update his username.
+app.patch('/users/profile/username', authenticateToken, (req, res) => {
+      User.findOne({username: req.username})
+      .then((user)=>{
+        const {username} = req.body; //what the user wants to change the username to.
+        //checking if there the new username is already used by some other user or not.
+        User.findOne({username: username})
+        .then((newUserExists)=>{
+            if (newUserExists){
+                res.send("A user with this username already exists.");
+            }
+            else{
+                User.updateOne({username: user.username}, {username: username})
+                .then(()=>{
+                    res.send("Successfully updated username!");
+                }).catch(()=>{res.send("Error updating username")})
+            }
+        }).catch((err)=>{res.send("Error finding user.")})
+      })
+    .catch ((error)=> {
       res.status(500).json({ error: 'Error retrieving user profile' });
-    }
+    })
   });
+
+
 
 function authenticateToken(req, res, next) {
     const authHeader = req.headers.authorization
