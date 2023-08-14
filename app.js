@@ -168,6 +168,20 @@ app.patch('/users/profile/username', authenticateToken, (req, res) => {
   })
 });
 
+app.patch('/users/profile/bio', authenticateToken, (req, res) => {
+    User.findOne({username: req.username})
+    .then((user)=>{
+        console.log(user);
+      const {bio} = req.body;
+      User.updateOne({username: user.username}, {bio: bio})
+      .then(()=>{res.send("Successfully updated bio!")})
+      .catch(()=>{res.send("Error occurred while updating bio.")})
+    })
+  .catch ((error)=> {
+    res.status(500).json({ error: 'Error retrieving user profile' });
+  })
+});
+
 function authenticateToken(req, res, next) {
     const token = req.cookies.token
     
