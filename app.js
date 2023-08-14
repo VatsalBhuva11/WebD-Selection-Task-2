@@ -2,12 +2,14 @@ require('dotenv').config()
 const express = require("express");
 const mongoose = require("mongoose");
 const jwt = require('jsonwebtoken');
+const cookieParser = require("cookie-parser")
 const app = express();
 
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
 app.use(express.urlencoded({extended: true}));
+app.use(cookieParser());
 // app.use(express.json());
 
 
@@ -70,6 +72,8 @@ app.post("/users/login", (req, res)=>{
             bcrypt.compare(password, foundUser.password).then(function(result) {
                 if (result){
                     const token = jwt.sign({ username: username }, process.env.SECRET_KEY);
+                    //storing the generated token as a cookie so to send the JWT along with required routes.
+                    res.cookie("token",token);
                     res.json({ token }); //get hold of token here and use it as authorization header value for further requests
                 } else {
                     res.send("Incorrect password!");
@@ -114,7 +118,8 @@ app.post('/users/profile', authenticateToken, (req, res)=>{
     }).catch(()=>{res.send("Error retrieving profile.")})
 })
 
-//logged in user trying to update his username.
+//logged in user trying to update his username.\
+//updating username will make the current AuthToken invalid, so we need to LOGIN again.
 app.patch('/users/profile/username', authenticateToken, (req, res) => {
       User.findOne({username: req.username})
       .then((user)=>{
@@ -164,9 +169,8 @@ app.patch('/users/profile/username', authenticateToken, (req, res) => {
 });
 
 function authenticateToken(req, res, next) {
-    const authHeader = req.headers.authorization
-    const token = authHeader && authHeader.split(' ')[1]
-    // console.log(token);
+    const token = req.cookies.token
+    
     if (token == null) return res.sendStatus(401)
   
     jwt.verify(token, process.env.SECRET_KEY, (err, user) => {
