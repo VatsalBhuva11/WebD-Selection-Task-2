@@ -1,15 +1,30 @@
 require('dotenv').config()
-const express = require("express");
-const mongoose = require("mongoose");
-const jwt = require('jsonwebtoken');
-const cookieParser = require("cookie-parser")
-const app = express();
+const express = require("express"); //for route handling
+const mongoose = require("mongoose"); //database
+const jwt = require('jsonwebtoken'); //authentication and authorization
+const cookieParser = require("cookie-parser") //storing JWT generated for authentication
 
-const bcrypt = require('bcrypt');
+const multer = require('multer');
+
+const bcrypt = require('bcrypt'); //securing passwords
 const saltRounds = 10;
+const PORT = process.env.PORT | 3000;
 
+const app = express();
 app.use(express.urlencoded({extended: true}));
 app.use(cookieParser());
+
+
+//using multer to handle storage of files (posts)
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads/'); // Define the destination folder for uploaded files
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + '-' + file.originalname); // Define the filename
+    },
+});
+const upload = multer({ storage: storage });
 // app.use(express.json());
 
 
@@ -23,15 +38,27 @@ const socialMediaUsers = new mongoose.Schema({
     password: String,
     bio: {type: String, default: ""},
     gender: {type: String, default: ""}
-
+    
 })
 
-// const socialMediaPosts = new mongoose.Schema({
+const Post = new mongoose.Schema({
+    imgPath: String,
+    caption: String,
+    likes: {type: Number, default: 0},
+    dislikes: {type: Number, default: 0},
+    comments: Array
+})
 
-// })
+//schema to store all the posts of a given user. the posts array contains an array of posts, where 
+//each post is of a different schema that contains information about the likes, dislikes, comments on that post.
+const socialMediaPosts = new mongoose.Schema({
+    username: String,
+    posts: [Post]
+})
 
 const User = mongoose.model('socialMediaUser', socialMediaUsers);
-// const Posts = new mongoose.Model('socialMediaPost', socialMediaPosts);
+const singlePost = mongoose.model('singlePost', Post);
+const Posts = mongoose.model('socialMediaPost', socialMediaPosts);
 
 app.post("/users/register", (req, res)=>{
     const { username, email, password } = req.body; //password is the user-input plain password.
@@ -40,8 +67,9 @@ app.post("/users/register", (req, res)=>{
     .then((user)=>{
         if (user){
             res.send("User already exists.");
-        }
-        else{
+        } else if (user.email === email) {
+            res.send("This email is already in use.");
+        } else {
             //if no such user exists, salt and hash the input password, and store the hash, email, username.
             bcrypt.hash(password, saltRounds)
             .then((hash)=>{
@@ -51,7 +79,10 @@ app.post("/users/register", (req, res)=>{
                         password: hash
                     })
                     newUser.save().then(()=>{
-                        res.send("Successfully saved user")
+                        new Posts({username: username}).save()
+                        .then(()=>{res.send("Successfully saved user")})
+                        .catch(()=>{res.send("Error occurred while registering user.")})
+                        
                     })
                     .catch(()=>{res.send("Some error occurred while saving user")})
                 })
@@ -118,7 +149,29 @@ app.post('/users/profile', authenticateToken, (req, res)=>{
     }).catch(()=>{res.send("Error retrieving profile.")})
 })
 
-//logged in user trying to update his username.\
+//logged in user creating a new post.
+app.post('/users/posts/', authenticateToken, upload.single('file'), (req, res) => {
+    // Access the filename of the uploaded file
+    const uploadedFileName = "./uploads/"+req.file.filename;
+    const caption = req.body.caption;
+    const post = new singlePost({
+        imgPath: uploadedFileName,
+        caption: caption
+    })
+    Posts.findOneAndUpdate(
+        { username: req.username }, 
+        { $push: { posts: post  } }
+    ).then(()=>{
+        res.json({
+            message: "Successfully created a new post!",
+            caption: caption,
+            filename: uploadedFileName
+        });
+    }).catch(()=>{res.send("Error occurred while creating new post.")})
+
+  });
+
+//logged in user trying to update his username.
 //updating username will make the current AuthToken invalid, so we need to LOGIN again.
 app.patch('/users/profile/username', authenticateToken, (req, res) => {
       User.findOne({username: req.username})
@@ -133,7 +186,10 @@ app.patch('/users/profile/username', authenticateToken, (req, res) => {
             else{
                 User.updateOne({username: user.username}, {username: username})
                 .then(()=>{
-                    res.send("Successfully updated username!");
+                    Posts.updateOne({username: user.username}, {username: username})
+                    .then(()=>{res.send("Successfully updated username! Please login again." )})
+                    .catch(()=>{res.send("Error updating username")})
+                    
                 }).catch(()=>{res.send("Error updating username")})
             }
         }).catch((err)=>{res.send("Error finding user.")})
@@ -195,6 +251,6 @@ function authenticateToken(req, res, next) {
   }
   
 
-app.listen(3000, function(){
-    console.log(`Listening on port 3000`);
+app.listen(PORT, function(){
+    console.log(`Listening on port ${PORT}`);
 })
