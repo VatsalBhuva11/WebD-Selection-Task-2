@@ -263,46 +263,6 @@ app.post(
     }
 );
 
-//logged in user trying to update his username.
-//updating username will make the current AuthToken invalid, so we need to LOGIN again.
-app.patch("/users/profile/username", authenticateToken, (req, res) => {
-    User.findOne({ username: req.username })
-        .then((user) => {
-            const { username } = req.body; //what the user wants to change the username to.
-            //checking if there the new username is already used by some other user or not.
-            User.findOne({ username: username })
-                .then((newUserExists) => {
-                    if (newUserExists) {
-                        res.send("A user with this username already exists.");
-                    } else {
-                        User.updateOne({ username: user.username }, { username: username })
-                            .then(() => {
-                                Posts.updateOne(
-                                    { username: user.username },
-                                    { username: username }
-                                )
-                                    .then(() => {
-                                        res.send(
-                                            "Successfully updated username! Please login again."
-                                        );
-                                    })
-                                    .catch(() => {
-                                        res.send("Error updating username");
-                                    });
-                            })
-                            .catch(() => {
-                                res.send("Error updating username");
-                            });
-                    }
-                })
-                .catch((err) => {
-                    res.send("Error finding user.");
-                });
-        })
-        .catch((error) => {
-            res.status(500).json({ error: "Error retrieving user profile" });
-        });
-});
 
 app.patch("/users/profile/password", authenticateToken, (req, res) => {
     User.findOne({ username: req.username })
@@ -357,7 +317,7 @@ function authenticateToken(req, res, next) {
     const token = req.cookies.token;
 
     if (token == null) return res.sendStatus(401);
-
+    
     jwt.verify(token, process.env.SECRET_KEY, (err, user) => {
         if (err) {
             return res.sendStatus(403);
@@ -370,3 +330,72 @@ function authenticateToken(req, res, next) {
 app.listen(PORT, function () {
     console.log(`Listening on port ${PORT}`);
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//logged in user trying to update his username.
+//updating username will make the current AuthToken invalid, so we need to LOGIN again.
+
+
+    // app.patch("/users/profile/username", authenticateToken, (req, res) => {
+    //     User.findOne({ username: req.username })
+    //         .then((user) => {
+    //             const { username } = req.body; //what the user wants to change the username to.
+    //             //checking if there the new username is already used by some other user or not.
+    //             User.findOne({ username: username })
+    //                 .then((newUserExists) => {
+        //                     if (newUserExists) {
+    //                         res.send("A user with this username already exists.");
+    //                     } else {
+    
+    //                         User.updateOne({ username: user.username }, { username: username })
+    //                             .then(() => {
+    //                                 Posts.updateOne(
+    //                                     { username: user.username },
+    //                                     { username: username }
+    //                                 )
+    //                                     .then(() => {
+    //                                         res.send(
+    //                                             "Successfully updated username! Please login again."
+    //                                         );
+    //                                     })
+    //                                     .catch(() => {
+    //                                         res.send("Error updating username");
+    //                                     });
+    //                             })
+    //                             .catch(() => {
+    //                                 res.send("Error updating username");
+    //                             });
+    //                     }
+    //                 })
+    //                 .catch((err) => {
+    //                     res.send("Error finding user.");
+    //                 });
+    //         })
+    //         .catch((error) => {
+    //             res.status(500).json({ error: "Error retrieving user profile" });
+    //         });
+    // });
