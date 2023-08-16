@@ -239,6 +239,47 @@ app.post("/users/:username/follow", authenticateToken, (req, res) => {
     }
 });
 
+//unfollow a user
+app.post("/users/:username/unfollow", authenticateToken, (req, res) => {
+    const userToUnfollow = req.params.username;
+    const userSendRequest = req.username;
+    if (userToUnfollow === userSendRequest) {
+        res.send("You cannot unfollow yourself.");
+    } else {
+        //add the user in the followedBy array of the user to follow.
+        User.findOne({ username: userToUnfollow })
+            .then((foundUser) => {
+                if (foundUser) {
+                    const isFollowed = foundUser.followedBy.find(
+                        (user) => user === userSendRequest
+                    );
+                    if (isFollowed) {
+                        //can't follow the same user twice from the same account.
+                        User.updateOne({ username: userToUnfollow }, { //remove the user from the followedBy array.
+                            $pull: {
+                                followedBy: userSendRequest,
+                            }
+                        }).then(()=>{
+                            User.updateOne({username: userSendRequest}, {
+                                $pull: {
+                                    following: userToUnfollow,
+                                }  
+                            }).then(()=>{res.send("Successfully unfollowed the user.")})
+                            .catch(()=>{res.send("Could not unfollow the user.")})
+                        }).catch(()=>{res.send("Error occurred while unfollowing the user.")})
+                    } else {
+                        res.send("You do not follow this user.");
+                    }
+                } else {
+                    res.send("User does not exist.");
+                }
+            })
+            .catch(() => {
+                res.send("Unable to process unfollow request.");
+            });
+    }
+});
+
 app.post("/users/:username/:postID/like", authenticateToken, (req, res) => {
     const username = req.params.username; //the username of the user who's post is to be liked
     const postID = req.params.postID;
