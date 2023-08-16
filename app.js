@@ -217,6 +217,32 @@ app.post("/users/:username/:postID/dislike", authenticateToken, (req, res) => {
     }
 });
 
+
+//add comment on a post.
+app.post("/users/:username/:postID/comment", authenticateToken, (req, res)=>{
+    const username = req.params.username;
+    const postID = req.params.postID;
+    const comment = req.body.comment; //in the urlencoded form, not form-data.
+    if (comment.length === 0){
+        res.send("Cannot post empty comment.");
+    } else {
+        Posts.findOne({username: username})
+        .then((foundUser)=>{
+    
+            const postToUpdate = foundUser.posts.find(post => post._id.toString() === postID);
+            if (postToUpdate){
+                postToUpdate.comments.push({user: req.username, comment: comment});
+                foundUser.save()
+                .then(()=>{res.send("Added a comment on the post.")})
+                .catch(()=>{res.send("Could not comment on the post.")})
+            } else {
+                res.send("Invalid post.");
+            }
+    
+        }).catch(()=>{res.send("Error retrieving the post.")})
+}
+})
+
 //a post request on this route when the user is logged in will give him all his info.
 //does not require any form input.
 app.post("/users/profile", authenticateToken, (req, res) => {
