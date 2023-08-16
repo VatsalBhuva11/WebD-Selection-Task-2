@@ -80,7 +80,7 @@ app.post("/users/register", (req, res) => {
                             email: email,
                             password: hash,
                             gender: gender,
-                            bio: bio
+                            bio: bio,
                         });
                         newUser
                             .save()
@@ -127,11 +127,52 @@ app.post("/users/login", (req, res) => {
     });
 });
 
-app.post("/users/logout", (req, res)=>{
+app.post("/users/logout", (req, res) => {
     res.clearCookie("token");
     res.send("Successfully logged out!");
-})
+});
 
+//populate feed of user with the users he follows. if no users followed, show no posts.
+app.get("/home", authenticateToken, (req, res) => {
+    const username = req.username;
+    User.findOne({ username: username })
+        .then((foundUser) => {
+            if (foundUser) {
+                //only get the posts of the users that the user follows.
+                const following = foundUser.following;
+                let len = following.length;
+                if (len === 0) {
+                    res.send("No posts available to show (follow some users first).");
+                } else {
+                    const posts = [];
+                    //finding all the posts of all the users that the user follows.
+                    Posts.find({ username: { $in: following } })
+                    .then((foundFollowingUsers) => {
+                        //pushing the contents of each post of each followed user.
+                        foundFollowingUsers.forEach(user=>{
+                            posts.push(...user.posts);
+                        })
+                        //shuffle the order of posts shown in the feed.
+                        // Durstenfeld shuffle algorithm
+                        for (var i = posts.length - 1; i > 0; i--) {
+                            var j = Math.floor(Math.random() * (i + 1));
+                            var temp = posts[i];
+                            posts[i] = posts[j];
+                            posts[j] = temp;
+                        }
+                    })
+                    .then(()=>{res.send(posts)})
+                    .catch(() => {
+                        res.send("Could not populate feed.");
+                    });                      
+                    
+                }
+            }
+        })
+        .catch(() => {
+            res.send("Error retrieving user.");
+        });
+});
 
 app.get("/users/:username/posts", authenticateToken, (req, res) => {
     const username = req.params.username;
@@ -144,130 +185,169 @@ app.get("/users/:username/posts", authenticateToken, (req, res) => {
         });
 });
 
-app.post("/users/:username/follow", authenticateToken, (req, res)=>{
+app.post("/users/:username/follow", authenticateToken, (req, res) => {
     const userToFollow = req.params.username;
     const userSendRequest = req.username;
-    if (userToFollow === userSendRequest){
+    if (userToFollow === userSendRequest) {
         res.send("You cannot follow yourself.");
     } else {
         //add the user in the followedBy array of the user to follow.
-        User.findOne({username: userToFollow})
-        .then((foundUser)=>{
-            if (foundUser){
-                const isFollowed = foundUser.followedBy.find(user => user === userSendRequest);
-                if (isFollowed){
-                    res.send("You already follow this user.");
-                } else {
-                    foundUser.followedBy.push(userSendRequest);
-                    foundUser.save()
-                    .then(()=>{
-                        //add the user in the following array of the user that wants to follow.
-                        User.findOne({username: userSendRequest})
-                        .then((requestUser)=>{
-                            requestUser.following.push(userToFollow);
-                            requestUser.save()
-                            .then(()=>{
-                                res.send("Successfully followed the user!");
+        User.findOne({ username: userToFollow })
+            .then((foundUser) => {
+                if (foundUser) {
+                    const isFollowed = foundUser.followedBy.find(
+                        (user) => user === userSendRequest
+                    );
+                    if (isFollowed) {
+                        res.send("You already follow this user.");
+                    } else {
+                        foundUser.followedBy.push(userSendRequest);
+                        foundUser
+                            .save()
+                            .then(() => {
+                                //add the user in the following array of the user that wants to follow.
+                                User.findOne({ username: userSendRequest })
+                                    .then((requestUser) => {
+                                        requestUser.following.push(userToFollow);
+                                        requestUser
+                                            .save()
+                                            .then(() => {
+                                                res.send("Successfully followed the user!");
+                                            })
+                                            .catch(() => {
+                                                res.send("Could not follow the user.");
+                                            });
+                                    })
+                                    .catch(() => {
+                                        res.send("Could not follow the user.");
+                                    });
                             })
-                            .catch(()=>{res.send("Could not follow the user.")});
-                        }).catch(()=>{res.send("Could not follow the user.")});
-                    }).catch(()=>{res.send("Could not follow the user.")})
+                            .catch(() => {
+                                res.send("Could not follow the user.");
+                            });
+                    }
+                } else {
+                    res.send("User does not exist.");
                 }
-            } else {
-                res.send("User does not exist.")
-            }
-        })
-        .catch(()=>{res.send("Unable to process follow request.")});
+            })
+            .catch(() => {
+                res.send("Unable to process follow request.");
+            });
     }
-})
+});
 
 app.post("/users/:username/:postID/like", authenticateToken, (req, res) => {
     const username = req.params.username; //the username of the user who's post is to be liked
     const postID = req.params.postID;
-    if (username === req.username){ //req.username is the username of the authenticated user (the user who wants to like the post)
+    if (username === req.username) {
+        //req.username is the username of the authenticated user (the user who wants to like the post)
         res.send("Cannot like your own post.");
     } else {
-        Posts.findOne({username: username})
-        .then((foundUser)=>{
-    
-            const postToUpdate = foundUser.posts.find(post => post._id.toString() === postID);
-            if (postToUpdate){
-                const isLikedBy = postToUpdate.likedBy.find(user => user === req.username);
-                if (isLikedBy){
-                    res.send("Cannot like the same post twice.");
+        Posts.findOne({ username: username })
+            .then((foundUser) => {
+                const postToUpdate = foundUser.posts.find(
+                    (post) => post._id.toString() === postID
+                );
+                if (postToUpdate) {
+                    const isLikedBy = postToUpdate.likedBy.find(
+                        (user) => user === req.username
+                    );
+                    if (isLikedBy) {
+                        res.send("Cannot like the same post twice.");
+                    } else {
+                        postToUpdate.likes += 1;
+                        postToUpdate.likedBy.push(req.username);
+                        foundUser
+                            .save()
+                            .then(() => {
+                                res.send("Liked the post.");
+                            })
+                            .catch(() => {
+                                res.send("Could not like the post.");
+                            });
+                    }
+                } else {
+                    res.send("Invalid post.");
                 }
-                else{
-                    postToUpdate.likes += 1;
-                    postToUpdate.likedBy.push(req.username);
-                    foundUser.save()
-                    .then(()=>{res.send("Liked the post.")})
-                    .catch(()=>{res.send("Could not like the post.")})
-                }
-            } else {
-                res.send("Invalid post.");
-            }
-    
-        }).catch(()=>{res.send("Error retrieving the post.")})
+            })
+            .catch(() => {
+                res.send("Error retrieving the post.");
+            });
     }
 });
 
 app.post("/users/:username/:postID/dislike", authenticateToken, (req, res) => {
     const username = req.params.username; //the username of the user who's post is to be liked
     const postID = req.params.postID;
-    if (username === req.username){ //req.username is the username of the authenticated user (the user who wants to like the post)
+    if (username === req.username) {
+        //req.username is the username of the authenticated user (the user who wants to like the post)
         res.send("Cannot dislike your own post.");
     } else {
-        Posts.findOne({username: username})
-        .then((foundUser)=>{
-    
-            const postToUpdate = foundUser.posts.find(post => post._id.toString() === postID);
-            if (postToUpdate){
-                const isDislikedBy = postToUpdate.dislikedBy.find(user => user === req.username);
-                if (isDislikedBy){
-                    res.send("Cannot dislike the same post twice.");
+        Posts.findOne({ username: username })
+            .then((foundUser) => {
+                const postToUpdate = foundUser.posts.find(
+                    (post) => post._id.toString() === postID
+                );
+                if (postToUpdate) {
+                    const isDislikedBy = postToUpdate.dislikedBy.find(
+                        (user) => user === req.username
+                    );
+                    if (isDislikedBy) {
+                        res.send("Cannot dislike the same post twice.");
+                    } else {
+                        postToUpdate.dislikes += 1;
+                        postToUpdate.dislikedBy.push(req.username);
+                        foundUser
+                            .save()
+                            .then(() => {
+                                res.send("Disliked the post.");
+                            })
+                            .catch(() => {
+                                res.send("Could not dislike the post.");
+                            });
+                    }
+                } else {
+                    res.send("Invalid post.");
                 }
-                else{
-                    postToUpdate.dislikes += 1;
-                    postToUpdate.dislikedBy.push(req.username);
-                    foundUser.save()
-                    .then(()=>{res.send("Disliked the post.")})
-                    .catch(()=>{res.send("Could not dislike the post.")})
-                }
-            } else {
-                res.send("Invalid post.");
-            }
-    
-        }).catch(()=>{res.send("Error retrieving the post.")})
+            })
+            .catch(() => {
+                res.send("Error retrieving the post.");
+            });
     }
 });
 
-
 //add comment on a post.
-app.post("/users/:username/:postID/comment", authenticateToken, (req, res)=>{
+app.post("/users/:username/:postID/comment", authenticateToken, (req, res) => {
     const username = req.params.username;
     const postID = req.params.postID;
     const comment = req.body.comment; //in the urlencoded form, not form-data.
-    if (comment.length === 0){
+    if (comment.length === 0) {
         res.send("Cannot post empty comment.");
     } else {
-        Posts.findOne({username: username})
-        .then((foundUser)=>{
-    
-            const postToUpdate = foundUser.posts.find(post => post._id.toString() === postID);
-            if (postToUpdate){
-                postToUpdate.comments.push({user: req.username, comment: comment});
-                foundUser.save()
-                .then(()=>{res.send("Added a comment on the post.")})
-                .catch(()=>{res.send("Could not comment on the post.")})
-            } else {
-                res.send("Invalid post.");
-            }
-    
-        }).catch(()=>{res.send("Error retrieving the post.")})
-}
-})
-
-
+        Posts.findOne({ username: username })
+            .then((foundUser) => {
+                const postToUpdate = foundUser.posts.find(
+                    (post) => post._id.toString() === postID
+                );
+                if (postToUpdate) {
+                    postToUpdate.comments.push({ user: req.username, comment: comment });
+                    foundUser
+                        .save()
+                        .then(() => {
+                            res.send("Added a comment on the post.");
+                        })
+                        .catch(() => {
+                            res.send("Could not comment on the post.");
+                        });
+                } else {
+                    res.send("Invalid post.");
+                }
+            })
+            .catch(() => {
+                res.send("Error retrieving the post.");
+            });
+    }
+});
 
 //get profile of any user (remove password field and email field for security.)
 //even if password field is obtained, it is hashed so it is unusable.
@@ -275,15 +355,18 @@ app.get("/users/:username/", authenticateToken, (req, res) => {
     User.findOne({ username: req.params.username })
         .then((foundUser) => {
             if (foundUser) {
-                Posts.findOne({username: req.params.username})
-                .then((foundPosts)=>{
-                    res.send({
-                        ...foundUser._doc,
-                        ...foundPosts._doc,
-                        password: "",
-                        email: ""
+                Posts.findOne({ username: req.params.username })
+                    .then((foundPosts) => {
+                        res.send({
+                            ...foundUser._doc,
+                            ...foundPosts._doc,
+                            password: "",
+                            email: "",
+                        });
                     })
-                }).catch(()=>{res.send("Unable to fetch posts of the user.")})
+                    .catch(() => {
+                        res.send("Unable to fetch posts of the user.");
+                    });
             } else {
                 res.send("Unable to find user.");
             }
@@ -303,6 +386,7 @@ app.post(
         const uploadedFileName = "./uploads/" + req.file.filename;
         const caption = req.body.caption;
         const post = new singlePost({
+            user: req.username,
             imgPath: uploadedFileName,
             caption: caption,
         });
@@ -322,7 +406,6 @@ app.post(
             });
     }
 );
-
 
 app.patch("/users/profile/password", authenticateToken, (req, res) => {
     User.findOne({ username: req.username })
@@ -376,7 +459,7 @@ function authenticateToken(req, res, next) {
     const token = req.cookies.token;
 
     if (token == null) return res.sendStatus(401);
-    
+
     jwt.verify(token, process.env.SECRET_KEY, (err, user) => {
         if (err) {
             return res.sendStatus(403);
@@ -390,71 +473,45 @@ app.listen(PORT, function () {
     console.log(`Listening on port ${PORT}`);
 });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 //logged in user trying to update his username.
 //updating username will make the current AuthToken invalid, so we need to LOGIN again.
 
+// app.patch("/users/profile/username", authenticateToken, (req, res) => {
+//     User.findOne({ username: req.username })
+//         .then((user) => {
+//             const { username } = req.body; //what the user wants to change the username to.
+//             //checking if there the new username is already used by some other user or not.
+//             User.findOne({ username: username })
+//                 .then((newUserExists) => {
+//                     if (newUserExists) {
+//                         res.send("A user with this username already exists.");
+//                     } else {
 
-    // app.patch("/users/profile/username", authenticateToken, (req, res) => {
-    //     User.findOne({ username: req.username })
-    //         .then((user) => {
-    //             const { username } = req.body; //what the user wants to change the username to.
-    //             //checking if there the new username is already used by some other user or not.
-    //             User.findOne({ username: username })
-    //                 .then((newUserExists) => {
-        //                     if (newUserExists) {
-    //                         res.send("A user with this username already exists.");
-    //                     } else {
-    
-    //                         User.updateOne({ username: user.username }, { username: username })
-    //                             .then(() => {
-    //                                 Posts.updateOne(
-    //                                     { username: user.username },
-    //                                     { username: username }
-    //                                 )
-    //                                     .then(() => {
-    //                                         res.send(
-    //                                             "Successfully updated username! Please login again."
-    //                                         );
-    //                                     })
-    //                                     .catch(() => {
-    //                                         res.send("Error updating username");
-    //                                     });
-    //                             })
-    //                             .catch(() => {
-    //                                 res.send("Error updating username");
-    //                             });
-    //                     }
-    //                 })
-    //                 .catch((err) => {
-    //                     res.send("Error finding user.");
-    //                 });
-    //         })
-    //         .catch((error) => {
-    //             res.status(500).json({ error: "Error retrieving user profile" });
-    //         });
-    // });
+//                         User.updateOne({ username: user.username }, { username: username })
+//                             .then(() => {
+//                                 Posts.updateOne(
+//                                     { username: user.username },
+//                                     { username: username }
+//                                 )
+//                                     .then(() => {
+//                                         res.send(
+//                                             "Successfully updated username! Please login again."
+//                                         );
+//                                     })
+//                                     .catch(() => {
+//                                         res.send("Error updating username");
+//                                     });
+//                             })
+//                             .catch(() => {
+//                                 res.send("Error updating username");
+//                             });
+//                     }
+//                 })
+//                 .catch((err) => {
+//                     res.send("Error finding user.");
+//                 });
+//         })
+//         .catch((error) => {
+//             res.status(500).json({ error: "Error retrieving user profile" });
+//         });
+// });
