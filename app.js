@@ -34,6 +34,7 @@ const socialMediaUsers = new mongoose.Schema({
     username: String,
     email: String,
     password: String,
+    profileVisits: { type: Number, default: 0 },
     following: Array,
     followedBy: Array,
     bio: { type: String, default: "" },
@@ -44,6 +45,7 @@ const Post = new mongoose.Schema({
     username: String,
     imgPath: String,
     caption: String,
+    date: String,
     likes: { type: Number, default: 0 },
     likedBy: Array,
     dislikes: { type: Number, default: 0 },
@@ -199,6 +201,7 @@ app.post("/users/:username/follow", authenticateToken, (req, res) => {
                         (user) => user === userSendRequest
                     );
                     if (isFollowed) {
+                        //can't follow the same user twice from the same account.
                         res.send("You already follow this user.");
                     } else {
                         foundUser.followedBy.push(userSendRequest);
@@ -385,8 +388,10 @@ app.post(
         // Access the filename of the uploaded file
         const uploadedFileName = "./uploads/" + req.file.filename;
         const caption = req.body.caption;
+        const date = new Date().toLocaleDateString();
         const post = new singlePost({
-            user: req.username,
+            date: date,
+            username: req.username,
             imgPath: uploadedFileName,
             caption: caption,
         });
