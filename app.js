@@ -412,15 +412,19 @@ app.delete("/users/:username/:postID/:commentID/", authenticateToken, (req, res)
                 (comment) => comment.index === commentIndex
             );
             const index = postToUpdate.comments.indexOf(commentToDelete);
-            if (index > -1) { 
-                postToUpdate.comments.splice(index, 1); 
-                postToUpdate.save()
-                .then(()=>{
-                    res.send("Successfully deleted the comment");
-                }).catch(()=>{res.send("Unable to delete the comment.")});
-            } else {
-                res.send("No comment with this index exists on this post.")
-            }
+            res.send({
+                commentToDelete: commentToDelete,
+                index: index
+            });
+            // if (index > -1) { 
+            //     postToUpdate.comments.splice(index, 1); 
+            //     postToUpdate.save()
+            //     .then(()=>{
+            //         res.send("Successfully deleted the comment");
+            //     }).catch(()=>{res.send("Unable to delete the comment.")});
+            // } else {
+            //     res.send("No comment with this index exists on this post.")
+            // }
 
         } else {
             res.send("Cannot find the post.");
