@@ -1,4 +1,4 @@
-require("dotenv").config();
+require("./controllers/node_modules/dotenv/lib/main").config();
 const express = require("express"); //for route handling
 const mongoose = require("mongoose"); //database
 const jwt = require("jsonwebtoken"); //authentication and authorization
