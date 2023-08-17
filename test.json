@@ -1,0 +1,28 @@
+{
+    "_id": "64dd0c862af232374fbf5d84",
+    "username": "test",
+    "posts": [
+        {
+            "username": "test",
+            "imgPath": "./uploads/1692211146502-vatsal signature.jpg",
+            "caption": "",
+            "date": "8/16/2023",
+            "likes": 0,
+            "likedBy": [],
+            "dislikes": 0,
+            "dislikedBy": [],
+            "comments": [
+                {
+                    "user": "test",
+                    "comment": "Hey new comment added"
+                },
+                {
+                    "user": "test",
+                    "comment": "one more comment"
+                }
+            ],
+            "_id": "64dd17ca178ce763d04fc654"
+        }
+    ],
+    "__v": 2
+}
