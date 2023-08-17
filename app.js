@@ -51,7 +51,6 @@ const Post = new mongoose.Schema({
     dislikes: { type: Number, default: 0 },
     dislikedBy: Array,
     comments: Array,
-    noOfComments: {type: Number, default: 0}
 });
 
 //schema to store all the posts of a given user. the posts array contains an array of posts, where
@@ -181,7 +180,11 @@ app.get("/users/:username/posts", authenticateToken, (req, res) => {
     const username = req.params.username;
     Posts.findOne({ username: username })
         .then((foundUser) => {
-            res.json(foundUser.posts);
+            if (foundUser.posts.length === 0){
+                res.send("The user has not posted anything.")
+            } else {
+                res.send(foundUser.posts);
+            }
         })
         .catch(() => {
             res.send("Error occurred while fetching posts.");
@@ -375,7 +378,7 @@ app.post("/users/:username/:postID/comment", authenticateToken, (req, res) => {
                     (post) => post._id.toString() === postID
                 );
                 if (postToUpdate) {
-                    postToUpdate.comments.push({ user: req.username, comment: comment, index: postToUpdate.noOfComments + 1 });
+                    postToUpdate.comments.push({ user: req.username, comment: comment, index: postToUpdate.comments.length + 1 });
                     foundUser
                         .save()
                         .then(() => {
@@ -395,13 +398,11 @@ app.post("/users/:username/:postID/comment", authenticateToken, (req, res) => {
 });
 
 //delete a comment
-app.delete("/users/:username/:postID/:commentID/delete", authenticateToken, (req, res) => {
-    const username = req.params.username;
+app.delete("/users/:username/:postID/:commentID/", authenticateToken, (req, res) => {
     const postID = req.params.postID;
     const commentIndex = req.body.commentID; //in the urlencoded form, not form-data.
     Posts.updateOne(
-        // { username: username },
-        { _id: postID },
+        { username: username },
         { $pull: { comments: { _id: commentIndex} } }
       )
         .then(result => {
@@ -483,9 +484,6 @@ app.delete("/users/:username/:postID", authenticateToken, (req, res) => {
     const username = req.params.username;
     const postID = req.params.postID;
 
-    // Posts.findOne({username: username})
-    // .then((foundPost)=>{res.send(foundPost)})
-    // .catch(()=>{res.send("error")});
     if (username !== req.username){
         res.send("Cannot delete the posts of another user!");
     } else {
