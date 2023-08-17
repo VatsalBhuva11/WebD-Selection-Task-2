@@ -416,7 +416,7 @@ app.delete("/users/:username/:postID/:commentID/", authenticateToken, (req, res)
         );
         if (postToUpdate){
             const commentToDelete = postToUpdate.comments.find(
-                (comment) => comment.commIndex.toString() === commentIndex
+                (comment) => comment.commIndex === commentIndex
             );
             const index = postToUpdate.comments.indexOf(commentToDelete);
             if (index > -1) { 
