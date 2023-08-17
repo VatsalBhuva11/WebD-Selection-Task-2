@@ -415,12 +415,17 @@ app.delete("/users/:username/:postID/:commentID/", authenticateToken, (req, res)
             (post) => post._id.toString() === postID
         );
         if (postToUpdate){
-            const commentToDelete = postToUpdate.comments.find(
-                (comment) => {
-                    console.log(comment);
-                    comment.commIndex.toString() === commentIndex
-                }
-            );
+            let commentToDelete;
+            postToUpdate.forEach((comment)=>{
+                // if (comment.commIndex === commentIndex){
+                //     commentToDelete = comment;
+                // }
+                res.send({
+                    userTypedCommentIndex: commentIndex,
+                    commentIndexInPost: comment.commIndex
+                })
+            })
+
             const index = postToUpdate.comments.indexOf(commentToDelete);
 
 
