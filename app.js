@@ -34,6 +34,7 @@ const socialMediaUsers = new mongoose.Schema({
     username: String,
     email: String,
     password: String,
+    profilePic: String,
     profileVisits: { type: Number, default: 0 },
     following: Array,
     followedBy: Array,
@@ -138,7 +139,7 @@ app.post("/users/logout", (req, res) => {
 });
 
 //populate feed of user with the users he follows. if no users followed, show no posts.
-app.get("/home", authenticateToken, (req, res) => {
+app.get("/users/home", authenticateToken, (req, res) => {
     const username = req.username;
     User.findOne({ username: username })
         .then((foundUser) => {
@@ -184,10 +185,20 @@ app.get("/users/:username/posts", authenticateToken, (req, res) => {
     const username = req.params.username;
     Posts.findOne({ username: username })
         .then((foundUser) => {
-            if (foundUser.posts.length === 0){
-                res.send("The user has not posted anything.")
+            if (foundUser){
+                if (req.username !== username){
+                    foundUser.profileVisits += 1;
+                }
+                foundUser.save()
+                .then(()=>{
+                    if (foundUser.posts.length === 0){
+                        res.send("The user has not posted anything.")
+                    } else {
+                        res.send(foundUser.posts);
+                    }
+                }).catch(()=>{res.send("Could not update profile visits count.")})
             } else {
-                res.send(foundUser.posts);
+                res.send("No such user exists.")
             }
         })
         .catch(() => {
@@ -445,17 +456,25 @@ app.delete("/users/:postID/:commentID/", authenticateToken, (req, res) => {
 //get profile of any user (remove password field and email field for security.)
 //even if password field is obtained, it is hashed so it is unusable.
 app.get("/users/:username/", authenticateToken, (req, res) => {
-    User.findOne({ username: req.params.username })
+    const username = req.params.username
+    User.findOne({ username: username })
         .then((foundUser) => {
             if (foundUser) {
-                Posts.findOne({ username: req.params.username })
+                Posts.findOne({ username: username })
+
                     .then((foundPosts) => {
-                        res.send({
-                            ...foundUser._doc,
-                            ...foundPosts._doc,
-                            password: "",
-                            email: "",
-                        });
+                        if (req.username !== username){
+                            foundUser.profileVisits += 1;
+                        }
+                        foundUser.save()
+                        .then(()=>{
+                            res.send({
+                                ...foundUser._doc,
+                                ...foundPosts._doc,
+                                password: "",
+                                email: "",
+                            });
+                        }).catch(()=>{res.send("Could not update profile visits count.")})
                     })
                     .catch(() => {
                         res.send("Unable to fetch posts of the user.");
@@ -470,11 +489,7 @@ app.get("/users/:username/", authenticateToken, (req, res) => {
 });
 
 //logged in user creating a new post.
-app.post(
-    "/users/posts/",
-    authenticateToken,
-    upload.single("file"),
-    (req, res) => {
+app.post("/users/posts/", authenticateToken, upload.single("file"), (req, res) => {
         // Access the filename of the uploaded file
         const uploadedFileName = "./uploads/" + req.file.filename;
         const caption = req.body.caption;
@@ -578,6 +593,28 @@ app.patch("/users/profile/bio", authenticateToken, (req, res) => {
         });
 });
 
+app.patch("/users/profile/profilepic", authenticateToken, upload.single("file"), (req, res) => {
+    // Access the filename of the uploaded file
+    const uploadedFileName = "./uploads/" + req.file.filename;
+    
+    User.findOneAndUpdate(
+        { username: req.username },
+        { profilePic: uploadedFileName }
+    )
+        .then(() => {
+            res.json({
+                message: "Successfully updated your profile pic!",
+                filename: uploadedFileName,
+            });
+        })
+        .catch(() => {
+            res.send("Error occurred while updating profile pic.");
+        });
+}
+);
+
+
+
 app.get("/test", (req,res)=>{
     res.send("Hi");
 })
@@ -620,7 +657,7 @@ app.listen(PORT, function () {
 
 
 
-
+    z
 //logged in user trying to update his username.
 //updating username will make the current AuthToken invalid, so we need to LOGIN again.
 
