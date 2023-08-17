@@ -409,7 +409,7 @@ app.delete("/users/:username/:postID/:commentID/", authenticateToken, (req, res)
         );
         if (postToUpdate){
             const commentToDelete = postToUpdate.comments.find(
-                (comment) => comment.index === commentIndex
+                (comment) => comment.index.toString() === commentIndex
             );
             const index = postToUpdate.comments.indexOf(commentToDelete);
             res.send({
