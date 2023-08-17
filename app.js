@@ -427,7 +427,7 @@ app.delete("/users/:username/:postID/:commentID/", authenticateToken, (req, res)
 
             if (index > -1) { 
                 postToUpdate.comments.splice(index, 1); 
-                postToUpdate.save()
+                foundUser.save()
                 .then(()=>{
                     res.send("Successfully deleted the comment");
                 }).catch(()=>{res.send("Unable to delete the comment.")});
