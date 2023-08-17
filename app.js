@@ -485,16 +485,25 @@ app.delete("/users/:username/:postID", authenticateToken, (req, res) => {
     // Posts.findOne({username: username})
     // .then((foundPost)=>{res.send(foundPost)})
     // .catch(()=>{res.send("error")});
-    Posts.updateOne(
-        { username: username },
-        { $pull: { posts: { _id: postID } } }
-      )
-        .then(result => {
-          res.send(result);
-        })
-        .catch(error => {
-          res.send('Error deleting post:', error);
-        });
+    if (username !== req.username){
+        res.send("Cannot delete the posts of another user!");
+    } else {
+        Posts.updateOne(
+            { username: username },
+            { $pull: { posts: { _id: postID } } }
+          )
+            .then(result => {
+              if (result.modifiedCount > 0){
+                res.send("Successfully deleted the post!");
+            } else {
+                res.send("Failed to delete the post!");
+              }
+            })
+            .catch(error => {
+              res.send('Error deleting post:', error);
+            });
+    }
+
 });
 
 app.get("/test", (req,res)=>{
