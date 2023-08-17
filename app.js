@@ -373,7 +373,7 @@ app.post("/users/:username/:postID/dislike", authenticateToken, (req, res) => {
 
 //add comment on a post.
 app.post("/users/:username/:postID/comment", authenticateToken, (req, res) => {
-    const username = req.params.username;
+    const username = req.params.username; //user who's post we want to comment on
     const postID = req.params.postID;
     const comment = req.body.comment; //in the urlencoded form, not form-data.
     if (comment.length === 0) {
@@ -405,10 +405,11 @@ app.post("/users/:username/:postID/comment", authenticateToken, (req, res) => {
 });
 
 //delete a comment
-app.delete("/users/:username/:postID/:commentID/", authenticateToken, (req, res) => {
-    const username = req.params.username; //post of which user.
+app.delete("/users/:postID/:commentID/", authenticateToken, (req, res) => {
+    const username = req.username; //post of which user.
     const postID = req.params.postID;
     const commentIndex = req.params.commentID; //in the urlencoded form, not form-data.
+
     Posts.findOne({username: username})
     .then((foundUser)=>{
         const postToUpdate = foundUser.posts.find(
