@@ -657,7 +657,6 @@ app.listen(PORT, function () {
 
 
 
-    z
 //logged in user trying to update his username.
 //updating username will make the current AuthToken invalid, so we need to LOGIN again.
 
