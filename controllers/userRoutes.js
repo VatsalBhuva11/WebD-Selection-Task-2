@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const authenticateToken = require('./authenticate');
+const authenticateToken = require("./authenticate");
 
 //register a user.
 router.post("/users/register", (req, res) => {
@@ -252,6 +252,7 @@ router.post("/users/:username/unfollow", authenticateToken, (req, res) => {
             });
     }
 });
+
 
 
 module.exports = router;
