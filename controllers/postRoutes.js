@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-
+const authenticateToken = require('./authenticate');
 
 //populate feed of user with the users he follows. if no users followed, show no posts.
 router.get("/users/home", authenticateToken, (req, res) => {
@@ -276,5 +276,19 @@ router.delete("/users/:username/:postID/:commentID/", authenticateToken, (req, r
         }
     }).catch(()=>{res.send("Could not retrieve the user.")})
 });
+
+function authenticateToken(req, res, next) {
+    const token = req.cookies.token;
+
+    if (token == null) return res.sendStatus(401);
+
+    jwt.verify(token, process.env.SECRET_KEY, (err, user) => {
+        if (err) {
+            return res.sendStatus(403);
+        }
+        req.username = user.username;
+        next();
+    });
+}
 
 module.exports = router;
