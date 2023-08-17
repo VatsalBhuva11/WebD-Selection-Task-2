@@ -402,20 +402,30 @@ app.delete("/users/:username/:postID/:commentID/", authenticateToken, (req, res)
     const username = req.params.username; //post of which user.
     const postID = req.params.postID;
     const commentIndex = req.body.commentID; //in the urlencoded form, not form-data.
-    Posts.updateOne(
-        { username: username , posts: { $elemMatch: { _id: postID } }},
-        { $pull: { comments: { index: commentIndex} } }
-      )
-        .then(result => {
-          if (result.modifiedCount > 0) {
-            res.send("Successfully deleted the comment.")
+    Posts.findOne({username: username})
+    .then((foundUser)=>{
+        const postToUpdate = foundUser.posts.find(
+            (post) => post._id.toString() === postID
+        );
+        if (postToUpdate){
+            const commentToDelete = postToUpdate.comments.find(
+                (comment) => comment.index === commentIndex
+            );
+            const index = postToUpdate.comments.indexOf(comment);
+            if (index > -1) { 
+                postToUpdate.comments.splice(index, 1); 
+                postToUpdate.save()
+                .then(()=>{
+                    res.send("Successfully deleted the comment");
+                }).catch(()=>{res.send("Unable to delete the comment.")});
+            } else {
+                res.send("No comment with this index exists on this post.")
+            }
+
         } else {
-            res.send("Unable to retrieve the post/comment.")
-          }
-        })
-        .catch(error => {
-          res.send('Error deleting comment:', error);
-        });
+            res.send("Cannot find the post.");
+        }
+    }).catch(()=>{res.send("Could not retrieve the user.")})
 });
 
 //get profile of any user (remove password field and email field for security.)
