@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const authenticateToken = require("./authenticate");
 const multer = require("multer");
+const upload = multer({ storage: storage });
 
 //populate feed of user with the users he follows. if no users followed, show no posts.
 router.get("/users/home", authenticateToken, (req, res) => {
