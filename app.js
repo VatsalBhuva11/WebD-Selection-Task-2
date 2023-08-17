@@ -399,11 +399,12 @@ app.post("/users/:username/:postID/comment", authenticateToken, (req, res) => {
 
 //delete a comment
 app.delete("/users/:username/:postID/:commentID/", authenticateToken, (req, res) => {
+    const username = req.params.username; //post of which user.
     const postID = req.params.postID;
     const commentIndex = req.body.commentID; //in the urlencoded form, not form-data.
     Posts.updateOne(
-        { username: username },
-        { $pull: { comments: { _id: commentIndex} } }
+        { username: username , posts: { $elemMatch: { _id: postID } }},
+        { $pull: { comments: { index: commentIndex} } }
       )
         .then(result => {
           if (result.modifiedCount > 0) {
