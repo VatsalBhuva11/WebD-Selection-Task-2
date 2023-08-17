@@ -393,6 +393,28 @@ app.post("/users/:username/:postID/comment", authenticateToken, (req, res) => {
     }
 });
 
+//delete a comment
+// app.delete("/users/:username/:postID/:commentID/delete", authenticateToken, (req, res) => {
+//     const username = req.params.username;
+//     const postID = req.params.postID;
+//     const commentID = req.body.commentID; //in the urlencoded form, not form-data.
+//     Posts.updateOne(
+//         // { username: username },
+//         { _id: postID },
+//         { $pull: { comments: { _id: commentID} } }
+//       )
+//         .then(result => {
+//           if (result.nModified > 0) {
+//             res.send("Successfully deleted the comment.")
+//         } else {
+//             res.send("Unable to retrieve the post/comment.")
+//           }
+//         })
+//         .catch(error => {
+//           res.send('Error deleting comment:', error);
+//         });
+// });
+
 //get profile of any user (remove password field and email field for security.)
 //even if password field is obtained, it is hashed so it is unusable.
 app.get("/users/:username/", authenticateToken, (req, res) => {
@@ -452,6 +474,30 @@ app.post(
             });
     }
 );
+
+
+
+//delete a post
+app.delete("/users/:username/:postID/delete", authenticateToken, (req, res) => {
+    const username = req.params.username;
+    const postID = req.params.postID;
+    
+    // Posts.findOne({_id: postID})
+    // .then((foundPost)=>{res.send(foundPost)})
+    // .catch(()=>{res.send("Error")});
+    Posts.deleteOne({ _id: postID })
+  .then(result => {
+    if (result.deletedCount > 0) {
+        res.send("Successfully deleted the post!")
+    } else {
+        res.send("Post not found.")
+    }
+  })
+  .catch(error => {
+    console.error('Error deleting post:', error);
+  });
+});
+
 
 app.patch("/users/profile/password", authenticateToken, (req, res) => {
     User.findOne({ username: req.username })
