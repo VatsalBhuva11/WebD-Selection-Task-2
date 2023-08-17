@@ -378,7 +378,7 @@ app.post("/users/:username/:postID/comment", authenticateToken, (req, res) => {
                     (post) => post._id.toString() === postID
                 );
                 if (postToUpdate) {
-                    postToUpdate.comments.push({ user: req.username, comment: comment, index: postToUpdate.comments.length + 1 });
+                    postToUpdate.comments.push({ user: req.username, comment: comment, ind: postToUpdate.comments.length + 1 });
                     foundUser
                         .save()
                         .then(() => {
@@ -409,13 +409,16 @@ app.delete("/users/:username/:postID/:commentID/", authenticateToken, (req, res)
         );
         if (postToUpdate){
             const commentToDelete = postToUpdate.comments.find(
-                (comment) => comment.index.toString() == commentIndex
+                (comment) => comment.ind.toString() === commentIndex
             );
             const index = postToUpdate.comments.indexOf(commentToDelete);
+            const dataType = typeof commentIndex;
             res.send({
                 postToUpdate: postToUpdate,
                 comments: postToUpdate.comments,
                 commentToDelete: commentToDelete,
+                commentIndexUser: commentIndex,
+                commentIndexUserType: dataType,
                 index: index
             });
             // if (index > -1) { 
