@@ -134,8 +134,12 @@ app.post("/users/login", (req, res) => {
 
 //log out the user
 app.post("/users/logout", (req, res) => {
-    res.clearCookie("token");
-    res.send("Successfully logged out!");
+    if (req.cookies['token'] !== undefined){
+        res.clearCookie("token");
+        res.send("Successfully logged out!");
+    } else {
+        res.send("No user is currently logged in.")
+    }
 });
 
 //populate feed of user with the users he follows. if no users followed, show no posts.
