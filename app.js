@@ -408,7 +408,7 @@ app.post("/users/:username/:postID/comment", authenticateToken, (req, res) => {
 app.delete("/users/:username/:postID/:commentID/", authenticateToken, (req, res) => {
     const username = req.params.username; //post of which user.
     const postID = req.params.postID;
-    const commentIndex = req.body.commentID; //in the urlencoded form, not form-data.
+    const commentIndex = req.params.commentID; //in the urlencoded form, not form-data.
     Posts.findOne({username: username})
     .then((foundUser)=>{
         const postToUpdate = foundUser.posts.find(
@@ -416,26 +416,23 @@ app.delete("/users/:username/:postID/:commentID/", authenticateToken, (req, res)
         );
         if (postToUpdate){
             const commentToDelete = postToUpdate.comments.find(
-                (comment) => comment.commIndex === commentIndex
+                (comment) => {
+                    console.log(comment);
+                    comment.commIndex === commentIndex
+                }
             );
             const index = postToUpdate.comments.indexOf(commentToDelete);
 
-            res.send({
-                user: foundUser,
-                post: postToUpdate,
-                comments: postToUpdate.comments,
-                index: index
-            })
 
-            // if (index > -1) { 
-            //     postToUpdate.comments.splice(index, 1); 
-            //     postToUpdate.save()
-            //     .then(()=>{
-            //         res.send("Successfully deleted the comment");
-            //     }).catch(()=>{res.send("Unable to delete the comment.")});
-            // } else {
-            //     res.send("No comment with this index exists on this post.")
-            // }
+            if (index > -1) { 
+                postToUpdate.comments.splice(index, 1); 
+                postToUpdate.save()
+                .then(()=>{
+                    res.send("Successfully deleted the comment");
+                }).catch(()=>{res.send("Unable to delete the comment.")});
+            } else {
+                res.send("No comment with this index exists on this post.")
+            }
 
         } else {
             res.send("Cannot find the post.");
