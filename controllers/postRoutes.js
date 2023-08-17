@@ -1,8 +1,71 @@
-const express = require('express');
-const router = express.Router();
-const authenticateToken = require("./authenticate");
+require("dotenv").config();
+const express = require("express"); //for route handling
+const mongoose = require("mongoose"); //database
+const jwt = require("jsonwebtoken"); //authentication and authorization
+const cookieParser = require("cookie-parser"); //storing JWT generated for authentication
+
 const multer = require("multer");
+
+const bcrypt = require("bcrypt"); //securing passwords
+const saltRounds = 10;
+const PORT = process.env.PORT | 3000;
+
+const userRoutes = require('./controllers/userRoutes');
+const postRoutes = require('./controllers/postRoutes');
+
+const app = express();
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+
+//using multer to handle storage of files (posts)
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, "uploads/"); // Define the destination folder for uploaded files
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + "-" + file.originalname); // Define the filename
+    },
+});
 const upload = multer({ storage: storage });
+// app.use(express.json());
+
+//setup a connection to the mongo database.
+mongoose.connect(process.env.MONGO_URL);
+
+//a new schema to store the username, email, and hash of every user.
+const socialMediaUsers = new mongoose.Schema({
+    username: String,
+    email: String,
+    password: String,
+    profileVisits: { type: Number, default: 0 },
+    following: Array,
+    followedBy: Array,
+    bio: { type: String, default: "" },
+    gender: { type: String, default: "" },
+});
+
+const Post = new mongoose.Schema({
+    username: String,
+    imgPath: String,
+    caption: String,
+    date: String,
+    likes: { type: Number, default: 0 },
+    likedBy: Array,
+    dislikes: { type: Number, default: 0 },
+    dislikedBy: Array,
+    comments: Array,
+});
+
+//schema to store all the posts of a given user. the posts array contains an array of posts, where
+//each post is of a different schema that contains information about the likes, dislikes, comments on that post.
+const socialMediaPosts = new mongoose.Schema({
+    username: String,
+    posts: [Post],
+});
+
+const User = mongoose.model("socialMediaUser", socialMediaUsers);
+const singlePost = mongoose.model("singlePost", Post);
+const Posts = mongoose.model("socialMediaPost", socialMediaPosts);
 
 //populate feed of user with the users he follows. if no users followed, show no posts.
 router.get("/users/home", authenticateToken, (req, res) => {
