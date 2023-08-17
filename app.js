@@ -385,7 +385,7 @@ app.post("/users/:username/:postID/comment", authenticateToken, (req, res) => {
                     (post) => post._id.toString() === postID
                 );
                 if (postToUpdate) {
-                    postToUpdate.comments.push({ user: req.username, comment: comment, commIndex: postToUpdate.comments.length + 1 });
+                    postToUpdate.comments.push({ user: req.username, comment: comment, commIndex: postToUpdate.comments.length});
                     foundUser
                         .save()
                         .then(() => {
