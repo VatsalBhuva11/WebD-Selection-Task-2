@@ -478,11 +478,13 @@ app.post(
 
 
 //delete a post
-app.post("/users/:username/:postID/delete", authenticateToken, (req, res) => {
+app.delete("/users/:username/:postID", authenticateToken, (req, res) => {
     const username = req.params.username;
     const postID = req.params.postID;
     
-    Posts.findOne({_id: postID})
+    console.log("Coming here atleast");
+
+    Posts.findOne({username: username})
     .then((foundPost)=>{res.send(foundPost)})
     .catch(()=>{res.send("Error")});
 //     Posts.deleteOne({ _id: postID })
