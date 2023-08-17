@@ -482,21 +482,21 @@ app.post("/users/:username/:postID/delete", authenticateToken, (req, res) => {
     const username = req.params.username;
     const postID = req.params.postID;
     
-    // Posts.findOne({_id: postID})
-    // .then((foundPost)=>{res.send(foundPost)})
-    // .catch(()=>{res.send("Error")});
-    Posts.deleteOne({ _id: postID })
-  .then(result => {
-    console.log(result);
-    if (result.deletedCount > 0) {
-        res.send("Successfully deleted the post!")
-    } else {
-        res.send("Post not found.")
-    }
-  })
-  .catch(error => {
-    console.error('Error deleting post:', error);
-  });
+    Posts.findOne({_id: postID})
+    .then((foundPost)=>{res.send(foundPost)})
+    .catch(()=>{res.send("Error")});
+//     Posts.deleteOne({ _id: postID })
+//   .then(result => {
+//     console.log(result);
+//     if (result.deletedCount > 0) {
+//         res.send("Successfully deleted the post!")
+//     } else {
+//         res.send("Post not found.")
+//     }
+//   })
+//   .catch(error => {
+//     console.error('Error deleting post:', error);
+//   });
 });
 
 app.get("/test", (req,res)=>{
