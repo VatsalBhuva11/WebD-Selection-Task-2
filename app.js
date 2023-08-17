@@ -413,6 +413,8 @@ app.delete("/users/:username/:postID/:commentID/", authenticateToken, (req, res)
             );
             const index = postToUpdate.comments.indexOf(commentToDelete);
             res.send({
+                postToUpdate: postToUpdate,
+                comments: postToUpdate.comments,
                 commentToDelete: commentToDelete,
                 index: index
             });
