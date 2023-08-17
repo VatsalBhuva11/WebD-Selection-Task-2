@@ -478,7 +478,7 @@ app.post(
 
 
 //delete a post
-app.delete("/users/:username/:postID/delete", authenticateToken, (req, res) => {
+app.post("/users/:username/:postID/delete", authenticateToken, (req, res) => {
     const username = req.params.username;
     const postID = req.params.postID;
     
@@ -487,6 +487,7 @@ app.delete("/users/:username/:postID/delete", authenticateToken, (req, res) => {
     // .catch(()=>{res.send("Error")});
     Posts.deleteOne({ _id: postID })
   .then(result => {
+    console.log(result);
     if (result.deletedCount > 0) {
         res.send("Successfully deleted the post!")
     } else {
@@ -498,6 +499,9 @@ app.delete("/users/:username/:postID/delete", authenticateToken, (req, res) => {
   });
 });
 
+app.get("/test", (req,res)=>{
+    res.send("Hi");
+})
 
 app.patch("/users/profile/password", authenticateToken, (req, res) => {
     User.findOne({ username: req.username })
