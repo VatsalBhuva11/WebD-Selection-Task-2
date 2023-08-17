@@ -51,6 +51,7 @@ const Post = new mongoose.Schema({
     dislikes: { type: Number, default: 0 },
     dislikedBy: Array,
     comments: Array,
+    noOfComments: {type: Number, default: 0}
 });
 
 //schema to store all the posts of a given user. the posts array contains an array of posts, where
@@ -374,7 +375,7 @@ app.post("/users/:username/:postID/comment", authenticateToken, (req, res) => {
                     (post) => post._id.toString() === postID
                 );
                 if (postToUpdate) {
-                    postToUpdate.comments.push({ user: req.username, comment: comment });
+                    postToUpdate.comments.push({ user: req.username, comment: comment, index: postToUpdate.noOfComments + 1 });
                     foundUser
                         .save()
                         .then(() => {
@@ -394,26 +395,26 @@ app.post("/users/:username/:postID/comment", authenticateToken, (req, res) => {
 });
 
 //delete a comment
-// app.delete("/users/:username/:postID/:commentID/delete", authenticateToken, (req, res) => {
-//     const username = req.params.username;
-//     const postID = req.params.postID;
-//     const commentID = req.body.commentID; //in the urlencoded form, not form-data.
-//     Posts.updateOne(
-//         // { username: username },
-//         { _id: postID },
-//         { $pull: { comments: { _id: commentID} } }
-//       )
-//         .then(result => {
-//           if (result.nModified > 0) {
-//             res.send("Successfully deleted the comment.")
-//         } else {
-//             res.send("Unable to retrieve the post/comment.")
-//           }
-//         })
-//         .catch(error => {
-//           res.send('Error deleting comment:', error);
-//         });
-// });
+app.delete("/users/:username/:postID/:commentID/delete", authenticateToken, (req, res) => {
+    const username = req.params.username;
+    const postID = req.params.postID;
+    const commentIndex = req.body.commentID; //in the urlencoded form, not form-data.
+    Posts.updateOne(
+        // { username: username },
+        { _id: postID },
+        { $pull: { comments: { _id: commentIndex} } }
+      )
+        .then(result => {
+          if (result.modifiedCount > 0) {
+            res.send("Successfully deleted the comment.")
+        } else {
+            res.send("Unable to retrieve the post/comment.")
+          }
+        })
+        .catch(error => {
+          res.send('Error deleting comment:', error);
+        });
+});
 
 //get profile of any user (remove password field and email field for security.)
 //even if password field is obtained, it is hashed so it is unusable.
