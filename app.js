@@ -64,6 +64,7 @@ const User = mongoose.model("socialMediaUser", socialMediaUsers);
 const singlePost = mongoose.model("singlePost", Post);
 const Posts = mongoose.model("socialMediaPost", socialMediaPosts);
 
+//register a user
 app.post("/users/register", (req, res) => {
     const { username, email, password, gender, bio } = req.body; //password is the user-input plain password.
     res.clearCookie("token");
@@ -106,6 +107,7 @@ app.post("/users/register", (req, res) => {
         .catch((err) => res.send(err));
 });
 
+//login a user
 app.post("/users/login", (req, res) => {
     const { username, password } = req.body;
     User.findOne({ username }).then((foundUser) => {
@@ -129,6 +131,7 @@ app.post("/users/login", (req, res) => {
     });
 });
 
+//log out the user
 app.post("/users/logout", (req, res) => {
     res.clearCookie("token");
     res.send("Successfully logged out!");
@@ -176,6 +179,7 @@ app.get("/home", authenticateToken, (req, res) => {
         });
 });
 
+//show all posts of a specified user.
 app.get("/users/:username/posts", authenticateToken, (req, res) => {
     const username = req.params.username;
     Posts.findOne({ username: username })
@@ -191,6 +195,7 @@ app.get("/users/:username/posts", authenticateToken, (req, res) => {
         });
 });
 
+//follow a user
 app.post("/users/:username/follow", authenticateToken, (req, res) => {
     const userToFollow = req.params.username;
     const userSendRequest = req.username;
@@ -284,6 +289,7 @@ app.post("/users/:username/unfollow", authenticateToken, (req, res) => {
     }
 });
 
+//like the post of a user
 app.post("/users/:username/:postID/like", authenticateToken, (req, res) => {
     const username = req.params.username; //the username of the user who's post is to be liked
     const postID = req.params.postID;
@@ -324,6 +330,7 @@ app.post("/users/:username/:postID/like", authenticateToken, (req, res) => {
     }
 });
 
+//dislike the post of a user
 app.post("/users/:username/:postID/dislike", authenticateToken, (req, res) => {
     const username = req.params.username; //the username of the user who's post is to be liked
     const postID = req.params.postID;
@@ -378,7 +385,7 @@ app.post("/users/:username/:postID/comment", authenticateToken, (req, res) => {
                     (post) => post._id.toString() === postID
                 );
                 if (postToUpdate) {
-                    postToUpdate.comments.push({ user: req.username, comment: comment, index: postToUpdate.comments.length + 1 });
+                    postToUpdate.comments.push({ user: req.username, comment: comment, commIndex: postToUpdate.comments.length + 1 });
                     foundUser
                         .save()
                         .then(() => {
@@ -409,9 +416,9 @@ app.delete("/users/:username/:postID/:commentID/", authenticateToken, (req, res)
         );
         if (postToUpdate){
             const commentToDelete = postToUpdate.comments.find(
-                (comment) => comment.index === commentIndex
+                (comment) => comment.commIndex.toString() === commentIndex
             );
-            const index = postToUpdate.comments.indexOf(comment);
+            const index = postToUpdate.comments.indexOf(commentToDelete);
             if (index > -1) { 
                 postToUpdate.comments.splice(index, 1); 
                 postToUpdate.save()
@@ -488,8 +495,6 @@ app.post(
     }
 );
 
-
-
 //delete a post
 app.delete("/users/:username/:postID", authenticateToken, (req, res) => {
     const username = req.params.username;
@@ -516,10 +521,7 @@ app.delete("/users/:username/:postID", authenticateToken, (req, res) => {
 
 });
 
-app.get("/test", (req,res)=>{
-    res.send("Hi");
-})
-
+//update the password of a user
 app.patch("/users/profile/password", authenticateToken, (req, res) => {
     User.findOne({ username: req.username })
         .then((user) => {
@@ -550,6 +552,7 @@ app.patch("/users/profile/password", authenticateToken, (req, res) => {
         });
 });
 
+//update the bio of a user
 app.patch("/users/profile/bio", authenticateToken, (req, res) => {
     User.findOne({ username: req.username })
         .then((user) => {
@@ -568,6 +571,10 @@ app.patch("/users/profile/bio", authenticateToken, (req, res) => {
         });
 });
 
+app.get("/test", (req,res)=>{
+    res.send("Hi");
+})
+
 function authenticateToken(req, res, next) {
     const token = req.cookies.token;
 
@@ -585,6 +592,27 @@ function authenticateToken(req, res, next) {
 app.listen(PORT, function () {
     console.log(`Listening on port ${PORT}`);
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //logged in user trying to update his username.
 //updating username will make the current AuthToken invalid, so we need to LOGIN again.
