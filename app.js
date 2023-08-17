@@ -496,7 +496,7 @@ app.delete("/users/:username/:postID", authenticateToken, (req, res) => {
               if (result.modifiedCount > 0){
                 res.send("Successfully deleted the post!");
             } else {
-                res.send("Failed to delete the post!");
+                res.send("Post does not exist.");
               }
             })
             .catch(error => {
