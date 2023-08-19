@@ -131,7 +131,10 @@ Enter the username and the postID (the same way as in liking a post), and enter 
 
 ![image](/assets/screenshots/view-posts.png)
 
-<li><ins>View posts of a user: </ins>View the posts of a specific user by heading over to this section, and entering the username of that user under the "username" attribute, in the "Params" section.
+<li><ins>Delete a post: </ins>Uploaded the wrong post? Or did you have a "felt cute might delete later" moment? Delete your post right away by mentioning the ID of your post!
 </li><br>
 
-![image](/assets/screenshots/view-posts.png)
+<li><ins>Delete a comment: </ins>Didn't like what someone commented on your post? Mention the postID, and the commentID of the comment to delete the comment right away! The postID and the commentID can be obtained by viewing the profile or the posts of a user. The commentID will be the value of the "commIndex" attribute of the specific comment. 
+</li><br>
+
+![image](/assets/screenshots/comment-index.png)
