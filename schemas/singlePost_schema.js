@@ -2,9 +2,16 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-const socialMediaPosts = new Schema({
+const Post = new Schema({
   username: String,
-  posts: [Post],
+  imgPath: String,
+  caption: String,
+  date: String,
+  likes: { type: Number, default: 0 },
+  likedBy: Array,
+  dislikes: { type: Number, default: 0 },
+  dislikedBy: Array,
+  comments: Array,
 });
 
 module.exports = mongoose.model("singlePost", Post);   
