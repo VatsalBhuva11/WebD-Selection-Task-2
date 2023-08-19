@@ -4,7 +4,6 @@ const cookieParser = require("cookie-parser"); //storing JWT generated for authe
 const authenticateToken = require("./authenticate");
 
 const multer = require("multer");
-const User = require("../schemas/user_schema")
 
 const router = express.Router();
 
