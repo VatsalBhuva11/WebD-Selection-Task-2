@@ -1,15 +1,15 @@
 # WebD-Selection-Task-2
 
-<u style="color: rgb(227, 177, 51)">**Name**</u>: Vatsal Bhuva <br />
-<u style="color: rgb(227, 177, 51)">**Enrollment Number**</u>: IIT2022004 <br />
-<u style="color: rgb(227, 177, 51)">**WhatsApp Number**</u>: 7041741104 <br />
-<u style="color: rgb(227, 177, 51)">**Bucket**</u>: Backend <br />
+<ins>**Name**</ins>: Vatsal Bhuva <br />
+<ins>**Enrollment Number**</ins>: IIT2022004 <br />
+<ins>**WhatsApp Number**</ins>: 7041741104 <br />
+<ins>**Bucket**</ins>: Backend <br />
 
 <hr>
 <h1>The Social Media Mastery </h1>
 <p> A fully functioning social media website's backend, crafted together using <strong><i style="color: rgb(227, 177, 51)">Express, Node.js, Multer, bcrypt, and more! </i></strong>
 
-<h2 style="border-bottom: none"><u>Installation</u></h2>
+<h2 style="border-bottom: none"><ins>Installation</ins></h2>
 As this application is composed entirely of the backend part of a social media website,
 we require <strong style="color: rgb(227, 177, 51)">Postman</strong> to make <span style="color: rgb(227, 177, 51)">HTTP requests</span> to the various
 routes. <br><br>
@@ -69,28 +69,31 @@ https://app.getpostman.com/join-team?invite_code=969a4684da6a66b6ff57b83eeb049cc
 Let's have a look at the different functionalities of the website, and how to use them.
 
 <h3> User Requests </h3>
-<li><u>Logout</u>: Nothing to do; click on the send option to log out from the currently logged in user.</li>
-<li><u>View profile</u>: This lets you view the profile information of any user. It does not require for you to be logged in. Type in the username of the user who's profile you want to view under the "Params" tab, not the "Body" tab like we've been doing so far.
+<li><ins>Logout</ins>: Nothing to do; click on the send option to log out from the currently logged in user.</li>
+
+<li><ins>View profile</ins>: This lets you view the profile information of any user. It does not require for you to be logged in. Type in the username of the user who's profile you want to view under the "Params" tab, not the "Body" tab like we've been doing so far.
 </li><br>
 
 ![image](/assets/screenshots/view-profile.png)
 
-<li><u>Follow request:</u> Want to make friends? Follow them up! Following a user lets you see their posts in your feed. Enter their username in the "Params" tab to follow them.
+<li><ins>Follow request:</ins> Want to make friends? Follow them up! Following a user lets you see their posts in your feed. Enter their username in the "Params" tab to follow them.
 </li><br>
 
-<li><u>Unfollow request:</u> Same functionality as the Follow feature.
+<li><ins>Unfollow request:</ins> Same functionality as the Follow feature.
 </li><br>
 
-<li><u>Update user password:</u> Didn't I tell you to remember your password? No worries, got your back. Head over to this request to change your password. The new password should be entered as the value to the password attribute under the "Body -> x-www-urlencoded" tab.
+<li><ins>Update user password:</ins> Didn't I tell you to remember your password? No worries, got your back. Head over to this request to change your password. The new password should be entered as the value to the password attribute under the "Body -> x-www-urlencoded" tab.
 </li><br>
 
 ![image](/assets/screenshots/update-password.png)
 
-<li><u>Update user bio:</u> Let others get to know more about you through your bio! Update your bio using this request, and showcase your specs!
+<li><ins>Update user bio:</ins> Let others get to know more about you through your bio! Update your bio using this request, and showcase your specs!
 </li><br>
 
-<li><u>Update profile pic:</u> Haven't seen me yet? View my profile pic! <strong>Note: the profile won't be visible as this is just the backend part. The image can, however, be rendered using frontend as the image's relative path is stored in the database. The same applies to viewing a user's posts as well.</strong>
+<li><ins>Update profile pic:</ins> Haven't seen me yet? View my profile pic! 
 </li><br>
+
+<strong>Note: the profile won't be visible as this is just the backend part. The image can, however, be rendered using frontend as the image's relative path is stored in the database. The same applies to viewing a user's posts as well.</strong>
 
 <hr>
 
