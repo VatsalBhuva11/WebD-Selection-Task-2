@@ -7,7 +7,6 @@ const postRoutes = require("./controller/postRoutes")
 
 const app = express();
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
 
 //setup a connection to the mongo database.
 mongoose.connect(process.env.MONGO_URL);
