@@ -3,8 +3,6 @@ const express = require("express"); //for route handling
 const mongoose = require("mongoose"); //database
 const jwt = require("jsonwebtoken"); //authentication and authorization
 const cookieParser = require("cookie-parser"); //storing JWT generated for authentication
-const fs = require("fs");
-const path = require("path");
 
 const multer = require("multer");
 
@@ -495,101 +493,33 @@ app.get("/users/:username/", authenticateToken, (req, res) => {
 });
 
 //logged in user creating a new post.
-app.post(
-  "/users/posts/",
-  authenticateToken,
-  upload.single("file"),
-  (req, res) => {
-    // Access the filename of the uploaded file
-    const uploadedFileName = "./uploads/" + req.file.filename;
-    function getLastCharacters(inputString, numCharacters) {
-      return inputString.slice(-numCharacters);
-    }
-
-    const extension = getLastCharacters(uploadedFileName, 3);
-    const jpegExtension = getLastCharacters(uploadedFileName, 4);
-    if (
-      extension !== "jpg" &&
-      extension !== "mp4" &&
-      extension !== "png" &&
-      extension !== "mov" && 
-        jpegExtension !== 'jpeg'
-    ) {
-      res.send(
-        "Invalid file format. Please use a .jpg, .mp4, .png, .jpeg, .mov format."
-      );
-    } else {
-      const caption = req.body.caption;
-      const date = new Date().toLocaleDateString();
-      const post = new singlePost({
-        date: date,
-        username: req.username,
-        imgPath: uploadedFileName,
-        caption: caption,
-      });
-      Posts.findOneAndUpdate(
-        { username: req.username },
-        { $push: { posts: post } }
-      )
-        .then(() => {
-          res.json({
-            message: "Successfully created a new post!",
+app.post("/users/posts/", authenticateToken, upload.single("file"), (req, res) => {
+        // Access the filename of the uploaded file
+        const uploadedFileName = "./uploads/" + req.file.filename;
+        const caption = req.body.caption;
+        const date = new Date().toLocaleDateString();
+        const post = new singlePost({
+            date: date,
+            username: req.username,
+            imgPath: uploadedFileName,
             caption: caption,
-            filename: uploadedFileName,
-          });
-        })
-        .catch(() => {
-          res.send("Error occurred while creating new post.");
         });
+        Posts.findOneAndUpdate(
+            { username: req.username },
+            { $push: { posts: post } }
+        )
+            .then(() => {
+                res.json({
+                    message: "Successfully created a new post!",
+                    caption: caption,
+                    filename: uploadedFileName,
+                });
+            })
+            .catch(() => {
+                res.send("Error occurred while creating new post.");
+            });
     }
-  }
 );
-
-//view a post
-// app.get("/users/posts/:username/:postID", async (req, res) => {
-//   try {
-//     const postID = req.params.postID;
-//     const username = req.params.username;
-//     // Retrieve file path from MongoDB
-//     Posts.findOne({ username: username })
-//       .then((foundUser) => {
-//         if (!foundUser) {
-//           res.send("User does not exist");
-//         } else {
-//           const post = foundUser.posts.find(
-//             (post) => post._id.toString() === postID
-//           );
-//           const file = post.imgPath;
-//           if (!file) {
-//             return res.status(404).send("File not found");
-//           }
-//           // Read the file from the server's file system
-//           const filePath = path.join(__dirname, file);
-//           res.send(filePath);
-//         //   fs.readFile(filePath, (err, data) => {
-//         //     if (err) {
-//         //       console.error("Error reading file:", err);
-//         //       return res.status(500).send("Error reading file");
-//         //     }
-
-//         //     // Set appropriate content type based on the file type
-//         //     const contentType = mime.getType(filePath);
-//         //     res.set("Content-Type", contentType);
-
-//         //     // Send the file content as a response
-//         //     res.send(data);
-//         //   });
-//         }
-//       })
-//       .catch(() => {
-//         res.send("Error processing get post request.");
-//       });
-//   } catch (error) {
-//     console.error("Error:", error);
-//     res.status(500).send("Internal Server Error");
-//   }
-// });
-
 
 //delete a post
 app.delete("/users/:username/:postID", authenticateToken, (req, res) => {
@@ -727,49 +657,3 @@ app.listen(PORT, function () {
 
 
 
-
-
-
-
-//logged in user trying to update his username.
-//updating username will make the current AuthToken invalid, so we need to LOGIN again.
-
-// app.patch("/users/profile/username", authenticateToken, (req, res) => {
-//     User.findOne({ username: req.username })
-//         .then((user) => {
-//             const { username } = req.body; //what the user wants to change the username to.
-//             //checking if there the new username is already used by some other user or not.
-//             User.findOne({ username: username })
-//                 .then((newUserExists) => {
-//                     if (newUserExists) {
-//                         res.send("A user with this username already exists.");
-//                     } else {
-
-//                         User.updateOne({ username: user.username }, { username: username })
-//                             .then(() => {
-//                                 Posts.updateOne(
-//                                     { username: user.username },
-//                                     { username: username }
-//                                 )
-//                                     .then(() => {
-//                                         res.send(
-//                                             "Successfully updated username! Please login again."
-//                                         );
-//                                     })
-//                                     .catch(() => {
-//                                         res.send("Error updating username");
-//                                     });
-//                             })
-//                             .catch(() => {
-//                                 res.send("Error updating username");
-//                             });
-//                     }
-//                 })
-//                 .catch((err) => {
-//                     res.send("Error finding user.");
-//                 });
-//         })
-//         .catch((error) => {
-//             res.status(500).json({ error: "Error retrieving user profile" });
-//         });
-// });
