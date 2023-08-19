@@ -1,3 +1,8 @@
+const cookieParser = require("cookie-parser");
+const express = require("express");
+const app = express();
+app.use(cookieParser());
+
 function authenticateToken(req, res, next) {
     const token = req.cookies.token;
   
