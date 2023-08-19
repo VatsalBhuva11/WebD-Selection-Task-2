@@ -93,8 +93,14 @@ Let's have a look at the different functionalities of the website, and how to us
 <li><ins>Update profile pic:</ins> Haven't seen me yet? View my profile pic! 
 </li><br>
 
+![image](/assets/screenshots/profile-pic.png)
+
 <strong>Note: the profile won't be visible as this is just the backend part. The image can, however, be rendered using frontend as the image's relative path is stored in the database. The same applies to viewing a user's posts as well.</strong>
+
 
 <hr>
 
-<!-- <h3> Post Requests </h3> -->
+<h3> Post Requests </h3>
+
+<li><ins>Create post:</ins> Share where you've been this summer or your outing with your friends and much more! 
+</li><br>
