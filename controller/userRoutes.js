@@ -31,7 +31,6 @@ const upload = multer({ storage: storage });
 //setup a connection to the mongo database.
 mongoose.connect(process.env.MONGO_URL);
 
-const User = require("../schemas/user_schema");
 
 //register a user
 router.post("/register", (req, res) => {
