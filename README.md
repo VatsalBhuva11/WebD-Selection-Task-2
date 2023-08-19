@@ -10,7 +10,7 @@
 <p> A fully functioning social media website's backend, crafted together using <strong><ins>Express, Node.js, Multer, bcrypt, and more! </ins></strong></p>
 <hr>
 
-<h3>Libraries used</h3>
+<h3><strong><ins>Libraries used</strong></ins></h3>
 <ol>
     <li><strong><ins>express</strong></ins>
         <p>To handle the different HTTP requests.</p>
@@ -37,39 +37,21 @@
 
 <h2 style="border-bottom: none"><ins>Installation</ins></h2>
 As this application is composed entirely of the backend part of a social media website,
-we require <strong style="color: rgb(227, 177, 51)">Postman</strong> to make <span style="color: rgb(227, 177, 51)">HTTP requests</span> to the various
+we require <strong>Postman</strong> to make HTTP requests to the various
 routes. <br><br>
 
-<strong>Windows (x64):</strong>
+<p> Paste the following link to open postman in your browser to directly simulate the requests.</p>
+
 ```
-https://dl.pstmn.io/download/latest/win64
+https://www.postman.com/universal-comet-532028/workspace/webd-task2-iit2022004/collection/29122774-5240a42b-9036-4b8e-912c-5082ffd517c5?action=share&creator=29122774
 ```
-<strong>Linux (x64):</strong>
-```
-https://dl.pstmn.io/download/latest/linux_64
-```
-<strong>Linux (arm64)</strong>:
-```
-https://dl.pstmn.io/download/latest/linux_arm64
-```
-<strong>MacOS (Intel Chip)</strong>:
-```
-https://dl.pstmn.io/download/latest/osx_64
-```
-<strong>MacOS (Intel Chip)</strong>:
-```
-https://dl.pstmn.io/download/latest/osx_arm64
-```
+
 <hr>
 
 <h2>Usage
 </h2>
 
-<li>Paste this Postman link in your browser to view the requests you can make: </li>
 
-```
-https://www.postman.com/universal-comet-532028/workspace/webd-task2-iit2022004/collection/29122774-5240a42b-9036-4b8e-912c-5082ffd517c5?action=share&creator=29122774
-```
 
 <li>Expand the 'Requests' tab to view the titles of the different requests that you make</li><br>
 
@@ -171,5 +153,4 @@ Enter the username and the postID (the same way as in liking a post), and enter 
 Mail me at: <a href="mailto: vatsalbhuva11@gmail.com" >vatsalbhuva11@gmail.com</a>
 
 LinkedIn: <a href="https://www.linkedin.com/in/vatsal-bhuva-673587233/">https://www.linkedin.com/in/vatsal-bhuva-673587233/</a>
-
 Instagram: <a href="https://www.instagram.com/_.vb11/">https://www.instagram.com/_.vb11/</a>
