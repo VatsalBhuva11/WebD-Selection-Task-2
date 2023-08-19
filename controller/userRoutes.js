@@ -6,6 +6,7 @@ const cookieParser = require("cookie-parser"); //storing JWT generated for authe
 const authenticateToken = require("./authenticate");
 
 const multer = require("multer");
+const User = require("../schemas/user_schema")
 
 const bcrypt = require("bcrypt"); //securing passwords
 const saltRounds = 10;
@@ -30,42 +31,7 @@ const upload = multer({ storage: storage });
 //setup a connection to the mongo database.
 mongoose.connect(process.env.MONGO_URL);
 
-//a new schema to store the username, email, and hash of every user.
-const socialMediaUsers = new mongoose.Schema({
-  username: String,
-  email: String,
-  password: String,
-  profilePic: String,
-  profileVisits: { type: Number, default: 0 },
-  following: Array,
-  followedBy: Array,
-  bio: { type: String, default: "" },
-  gender: { type: String, default: "" },
-});
-
-const Post = new mongoose.Schema({
-  username: String,
-  imgPath: String,
-  caption: String,
-  date: String,
-  likes: { type: Number, default: 0 },
-  likedBy: Array,
-  dislikes: { type: Number, default: 0 },
-  dislikedBy: Array,
-  comments: Array,
-});
-
-//schema to store all the posts of a given user. the posts array contains an array of posts, where
-//each post is of a different schema that contains information about the likes, dislikes, comments on that post.
-const socialMediaPosts = new mongoose.Schema({
-  username: String,
-  posts: [Post],
-});
-
-const User = mongoose.model("socialMediaUser", socialMediaUsers);
-const singlePost = mongoose.model("singlePost", Post);
-const Posts = mongoose.model("socialMediaPost", socialMediaPosts);
-
+const User = require("../schemas/user_schema");
 
 //register a user
 router.post("/register", (req, res) => {
