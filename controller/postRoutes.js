@@ -1,7 +1,6 @@
 require("dotenv").config();
 const express = require("express"); //for route handling
 const cookieParser = require("cookie-parser"); //storing JWT generated for authentication
-const authenticateToken = require("./authenticate");
 
 const multer = require("multer");
 
@@ -336,5 +335,20 @@ router.get("/home", authenticateToken, (req, res) => {
           res.send("Error deleting post:", error);
         });
   });
+
+  function authenticateToken(req, res, next) {
+    const token = req.cookies.token;
+  
+    if (token == null) return res.sendStatus(401);
+  
+    jwt.verify(token, process.env.SECRET_KEY, (err, user) => {
+      if (err) {
+        return res.sendStatus(403);
+      }
+      req.username = user.username;
+      next();
+    });
+  }
+
 
 module.exports = router;

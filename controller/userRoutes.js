@@ -3,7 +3,6 @@ const express = require("express"); //for route handling
 const mongoose = require("mongoose"); //database
 const jwt = require("jsonwebtoken"); //authentication and authorization
 const cookieParser = require("cookie-parser"); //storing JWT generated for authentication
-const authenticateToken = require("./authenticate");
 
 const multer = require("multer");
 
@@ -343,5 +342,20 @@ router.patch("/profile/profilepic",authenticateToken,upload.single("file"),(req,
       }
     }
   );
+
+  function authenticateToken(req, res, next) {
+    const token = req.cookies.token;
+  
+    if (token == null) return res.sendStatus(401);
+  
+    jwt.verify(token, process.env.SECRET_KEY, (err, user) => {
+      if (err) {
+        return res.sendStatus(403);
+      }
+      req.username = user.username;
+      next();
+    });
+  }
+
 
 module.exports = router;
