@@ -90,7 +90,7 @@ Let's have a look at the different functionalities of the website, and how to us
 <li><ins>Update user bio:</ins> Let others get to know more about you through your bio! Update your bio using this request, and showcase your specs!
 </li><br>
 
-<li><ins>Update profile pic:</ins> Haven't seen me yet? View my profile pic! 
+<li><ins>Update profile pic:</ins> Haven't seen me yet? View my profile pic! Under the "Body -> form-data" section, select the profile pic that you want to upload!
 </li><br>
 
 ![image](/assets/screenshots/profile-pic.png)
@@ -102,5 +102,5 @@ Let's have a look at the different functionalities of the website, and how to us
 
 <h3> Post Requests </h3>
 
-<li><ins>Create post:</ins> Share where you've been this summer or your outing with your friends and much more! 
+<li><ins>Create post:</ins> Share where you've been this summer or your outing with your friends and much more! Head over to the "Body -> form-data" section, and select the image/video that you want to post! Don't forget to add a suitable magical caption to captivate your followers!
 </li><br>
