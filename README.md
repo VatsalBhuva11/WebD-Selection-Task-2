@@ -14,25 +14,30 @@ As this application is composed entirely of the backend part of a social media w
 we require <strong style="color: rgb(227, 177, 51)">Postman</strong> to make <span style="color: rgb(227, 177, 51)">HTTP requests</span> to the various
 routes. <br><br>
 
-<span>Windows (x64):</span>
+<strong>Windows (x64):</strong>
 ```
 https://dl.pstmn.io/download/latest/win64
 ```
-<span>Linux (x64):</span>
+<strong>Linux (x64):</span>
 ```
 https://dl.pstmn.io/download/latest/linux_64
 ```
-<span>Linux (arm64)</span>:
+<strong>Linux (arm64)</span>:
 ```
 https://dl.pstmn.io/download/latest/linux_arm64
 ```
-<span>MacOS (Intel Chip)</span>:
+<strong>MacOS (Intel Chip)</span>:
 ```
 https://dl.pstmn.io/download/latest/osx_64
 ```
-<span>MacOS (Intel Chip)</span>:
+<strong>MacOS (Intel Chip)</span>:
 ```
 https://dl.pstmn.io/download/latest/osx_arm64
 ```
+<hr>
+
+<h2>Usage
+    
+</h2>
 
 

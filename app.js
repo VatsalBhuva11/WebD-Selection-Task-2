@@ -3,6 +3,8 @@ const express = require("express"); //for route handling
 const mongoose = require("mongoose"); //database
 const jwt = require("jsonwebtoken"); //authentication and authorization
 const cookieParser = require("cookie-parser"); //storing JWT generated for authentication
+const fs = require("fs");
+const path = require("path");
 
 const multer = require("multer");
 
@@ -520,6 +522,52 @@ app.post("/users/posts/", authenticateToken, upload.single("file"), (req, res) =
             });
     }
 );
+
+//view a post
+app.get("/users/posts/:username/:postID", async (req, res) => {
+  try {
+    const postID = req.params.postID;
+    const username = req.params.username;
+    // Retrieve file path from MongoDB
+    Posts.findOne({ username: username })
+      .then((foundUser) => {
+        if (!foundUser) {
+          res.send("User does not exist");
+        } else {
+          const post = foundUser.posts.find(
+            (post) => post._id.toString() === postID
+          );
+          const file = post.imgPath;
+          if (!file) {
+            return res.status(404).send("File not found");
+          }
+          // Read the file from the server's file system
+          const filePath = path.join(__dirname, file);
+          res.send(filePath);
+        //   fs.readFile(filePath, (err, data) => {
+        //     if (err) {
+        //       console.error("Error reading file:", err);
+        //       return res.status(500).send("Error reading file");
+        //     }
+
+        //     // Set appropriate content type based on the file type
+        //     const contentType = mime.getType(filePath);
+        //     res.set("Content-Type", contentType);
+
+        //     // Send the file content as a response
+        //     res.send(data);
+        //   });
+        }
+      })
+      .catch(() => {
+        res.send("Error processing get post request.");
+      });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
 
 //delete a post
 app.delete("/users/:username/:postID", authenticateToken, (req, res) => {
