@@ -1,6 +1,7 @@
 require("dotenv").config();
 const express = require("express"); //for route handling
 const cookieParser = require("cookie-parser"); //storing JWT generated for authentication
+const jwt = require("jsonwebtoken"); //authentication and authorization
 
 const multer = require("multer");
 
@@ -17,7 +18,7 @@ const singlePost = require("../schemas/singlePost_schema");
 //using multer to handle storage of files (posts)
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "uploads/"); // Define the destination folder for uploaded files
+    cb(null, "../uploads/"); // Define the destination folder for uploaded files
   },
   filename: (req, file, cb) => {
     cb(null, Date.now() + "-" + file.originalname); // Define the filename
