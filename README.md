@@ -7,7 +7,33 @@
 
 <hr>
 <h1>The Social Media Mastery </h1>
-<p> A fully functioning social media website's backend, crafted together using <strong><i style="color: rgb(227, 177, 51)">Express, Node.js, Multer, bcrypt, and more! </i></strong>
+<p> A fully functioning social media website's backend, crafted together using <strong><ins>Express, Node.js, Multer, bcrypt, and more! </ins></strong></p>
+<hr>
+
+<h3>Libraries used</h3>
+<ol>
+    <li><strong><ins>express</strong></ins>
+        <p>To handle the different HTTP requests.</p>
+    </li>
+    <li><strong><ins>mongoDB</strong></ins>
+        <p>Backbone of it all. Stores all the information, using which the HTTP requests access/store information</p>
+    </li>
+    <li><strong><ins>node.js</strong></ins>
+        <p>To install the different npm packages.</p>
+    </li>
+    <li><strong><ins>multer</strong></ins>
+        <p>To upload and store files as posts/pictures/videos.</p>
+    </li>
+    <li><strong><ins>bcrypt</strong></ins>
+        <p>Security is key. This enables hashing and salting passwords to secure the user's information. So, in the event of a data leak, only the hashed password is available which is very hard to crack.</p>
+    </li>
+    <li><strong><ins>jwt</strong></ins>
+        <p>Enables you to "stay logged in" across the different routes. JWT handles the authentication part so you don't have to login again and again.</p>
+    </li>
+    <li><strong><ins>cookieParser</strong></ins>
+        <p>Storing the JWT key in a cookie allows the JWT to be verified, ensuring that only a logged in user can perform most of the activities.</p>
+    </li>
+</ol>
 
 <h2 style="border-bottom: none"><ins>Installation</ins></h2>
 As this application is composed entirely of the backend part of a social media website,
@@ -42,10 +68,10 @@ https://dl.pstmn.io/download/latest/osx_arm64
 <li>Paste this Postman link in your browser to view the requests you can make: </li>
 
 ```
-https://app.getpostman.com/join-team?invite_code=969a4684da6a66b6ff57b83eeb049cca&target_code=de1c96afc48f36811ff9f904a023471c
+https://www.postman.com/universal-comet-532028/workspace/webd-task2-iit2022004/collection/29122774-5240a42b-9036-4b8e-912c-5082ffd517c5?action=share&creator=29122774
 ```
 
-<li>Expand the 'Integration Testing' tab to view the titles of the different requests that you make</li><br>
+<li>Expand the 'Requests' tab to view the titles of the different requests that you make</li><br>
 
 ![screenshot](assets/screenshots/integration-testing.png)
 
@@ -107,7 +133,7 @@ Let's have a look at the different functionalities of the website, and how to us
 
 ![image](/assets/screenshots/create-post.png)
 
-<li><ins>Like a post:</ins> Show your support to your close ones by liking their posts! Under the "Params" section, enter the username to whom the post belongs, and the ID of the post that you want to like. <strong>NOTE: the postID can be obtained by viewing the posts/profile of that user, and in the posts array will be listed all the posts with each post having a unique "_id" attribute. Copy the inner text (don't copy the ObjectID part) and paste it in the postID attribute.
+<li><ins>Like a post:</ins> Show your support to your close ones by liking their posts! Under the "Params" section, enter the username to whom the post belongs, and the ID of the post that you want to like. <strong>NOTE: the postID can be obtained by viewing the posts/profile of that user, and in the posts array will be listed all the posts with each post having a unique "_id" attribute. Copy the inner text (don't copy the ObjectID part) and paste it in the postID attribute.</strong>
 (don't be cheeky to like your own post or like the same post twice :) i've got that covered :))
 </li><br>
 
@@ -138,3 +164,12 @@ Enter the username and the postID (the same way as in liking a post), and enter 
 </li><br>
 
 ![image](/assets/screenshots/comment-index.png)
+
+<hr>
+
+<h3>Contacts</h3>
+Mail me at: <a href="mailto: vatsalbhuva11@gmail.com" >vatsalbhuva11@gmail.com</a>
+
+LinkedIn: <a href="https://www.linkedin.com/in/vatsal-bhuva-673587233/">https://www.linkedin.com/in/vatsal-bhuva-673587233/</a>
+
+Instagram: <a href="https://www.instagram.com/_.vb11/">https://www.instagram.com/_.vb11/</a>
