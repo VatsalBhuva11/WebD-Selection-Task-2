@@ -8,7 +8,6 @@ const multer = require("multer");
 
 const User = require("../schemas/user_schema")
 const Posts = require("../schemas/post_schema");
-const singlePost = require("../schemas/singlePost_schema");
 
 const bcrypt = require("bcrypt"); //securing passwords
 const saltRounds = 10;

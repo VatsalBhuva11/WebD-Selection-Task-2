@@ -1,13 +1,11 @@
 require("dotenv").config();
 const express = require("express"); //for route handling
 const mongoose = require("mongoose"); //database
-const cookieParser = require("cookie-parser");
 const PORT = process.env.PORT | 3000;
 const userRoutes = require("./controller/userRoutes");
 const postRoutes = require("./controller/postRoutes")
 
 const app = express();
-app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 
 //setup a connection to the mongo database.
