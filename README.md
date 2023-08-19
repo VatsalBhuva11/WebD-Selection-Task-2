@@ -46,18 +46,23 @@ https://app.getpostman.com/join-team?invite_code=969a4684da6a66b6ff57b83eeb049cc
 ```
 
 <li>Expand the 'Integration Testing' tab to view the titles of the different requests that you make</li>
-![image](/assets/screenshots/integration-testing.png)
 
-<l1>The userRequests tab enlists all the user-related options that are available for this social media website. Likewise, the postRequests tab enlists all the post-related options that a user can make.</li>
+![screenshot](assets/screenshots/integration-testing.png)
+
+<li>The userRequests tab enlists all the user-related options that are available for this social media website. Likewise, the postRequests tab enlists all the post-related options that a user can make.</li>
+
 ![image](/assets/screenshots/expand-tabs.png)
 
 <li>To get started, click on the "Register" option under the userRequests tab. Under the "Body" section on the right, and under the "x-www-form-urlencoded" tab, enter the details of the user that you want to register as (remember your username and password!)</li>
+
 ![image](/assets/screenshots/register.png)
 
 <li>Once registered, head over to the "Login" section, and login with the correct credentials. Without logging in, you will not be able to access the various different functionalities, other than being able to view the profile of users (just like instagram allows you to view the profile of another user without logging in.)</li>
+
 ![image](/assets/screenshots/login.png)
 
 <li>Upon successfully logging in, you should receive a "token" in the response section at the bottom. This is your JWT token, which is used to authenticate you as a logged in user across the different routes. You don't need to store the token anywhere, it's taken care of by 🍪 ;)</li>
+
 ![image](/assets/screenshots/login-token.png)
 
 
