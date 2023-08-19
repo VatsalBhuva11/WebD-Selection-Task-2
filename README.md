@@ -18,19 +18,19 @@ routes. <br><br>
 ```
 https://dl.pstmn.io/download/latest/win64
 ```
-<strong>Linux (x64):</span>
+<strong>Linux (x64):</strong>
 ```
 https://dl.pstmn.io/download/latest/linux_64
 ```
-<strong>Linux (arm64)</span>:
+<strong>Linux (arm64)</strong>:
 ```
 https://dl.pstmn.io/download/latest/linux_arm64
 ```
-<strong>MacOS (Intel Chip)</span>:
+<strong>MacOS (Intel Chip)</strong>:
 ```
 https://dl.pstmn.io/download/latest/osx_64
 ```
-<strong>MacOS (Intel Chip)</span>:
+<strong>MacOS (Intel Chip)</strong>:
 ```
 https://dl.pstmn.io/download/latest/osx_arm64
 ```
@@ -45,25 +45,53 @@ https://dl.pstmn.io/download/latest/osx_arm64
 https://app.getpostman.com/join-team?invite_code=969a4684da6a66b6ff57b83eeb049cca&target_code=de1c96afc48f36811ff9f904a023471c
 ```
 
-<li>Expand the 'Integration Testing' tab to view the titles of the different requests that you make</li>
+<li>Expand the 'Integration Testing' tab to view the titles of the different requests that you make</li><br>
 
 ![screenshot](assets/screenshots/integration-testing.png)
 
-<li>The userRequests tab enlists all the user-related options that are available for this social media website. Likewise, the postRequests tab enlists all the post-related options that a user can make.</li>
+<li>The userRequests tab enlists all the user-related options that are available for this social media website. Likewise, the postRequests tab enlists all the post-related options that a user can make.</li><br>
 
 ![image](/assets/screenshots/expand-tabs.png)
 
-<li>To get started, click on the "Register" option under the userRequests tab. Under the "Body" section on the right, and under the "x-www-form-urlencoded" tab, enter the details of the user that you want to register as (remember your username and password!)</li>
+<li>To get started, click on the "Register" option under the userRequests tab. Under the "Body" section on the right, and under the "x-www-form-urlencoded" tab, enter the details of the user that you want to register as (remember your username and password!)</li><br>
 
 ![image](/assets/screenshots/register.png)
 
-<li>Once registered, head over to the "Login" section, and login with the correct credentials. Without logging in, you will not be able to access the various different functionalities, other than being able to view the profile of users (just like instagram allows you to view the profile of another user without logging in.)</li>
+<li>Once registered, head over to the "Login" section, and login with the correct credentials. Without logging in, you will not be able to access the various different functionalities, other than being able to view the profile of users (just like instagram allows you to view the profile of another user without logging in.)</li><br>
 
 ![image](/assets/screenshots/login.png)
 
-<li>Upon successfully logging in, you should receive a "token" in the response section at the bottom. This is your JWT token, which is used to authenticate you as a logged in user across the different routes. You don't need to store the token anywhere, it's taken care of by 🍪 ;)</li>
+<li>Upon successfully logging in, you should receive a "token" in the response section at the bottom. This is your JWT token, which is used to authenticate you as a logged in user across the different routes. You don't need to store the token anywhere, it's taken care of by 🍪 ;)</li><br>
 
 ![image](/assets/screenshots/login-token.png)
 
+<hr>
+Let's have a look at the different functionalities of the website, and how to use them.
 
+<h3> User Requests </h3>
+<li><u>Logout</u>: Nothing to do; click on the send option to log out from the currently logged in user.</li>
+<li><u>View profile</u>: This lets you view the profile information of any user. It does not require for you to be logged in. Type in the username of the user who's profile you want to view under the "Params" tab, not the "Body" tab like we've been doing so far.
+</li><br>
 
+![image](/assets/screenshots/view-profile.png)
+
+<li><u>Follow request:</u> Want to make friends? Follow them up! Following a user lets you see their posts in your feed. Enter their username in the "Params" tab to follow them.
+</li><br>
+
+<li><u>Unfollow request:</u> Same functionality as the Follow feature.
+</li><br>
+
+<li><u>Update user password:</u> Didn't I tell you to remember your password? No worries, got your back. Head over to this request to change your password. The new password should be entered as the value to the password attribute under the "Body -> x-www-urlencoded" tab.
+</li><br>
+
+![image](/assets/screenshots/update-password.png)
+
+<li><u>Update user bio:</u> Let others get to know more about you through your bio! Update your bio using this request, and showcase your specs!
+</li><br>
+
+<li><u>Update profile pic:</u> Haven't seen me yet? View my profile pic! <strong>Note: the profile won't be visible as this is just the backend part. The image can, however, be rendered using frontend as the image's relative path is stored in the database. The same applies to viewing a user's posts as well.</strong>
+</li><br>
+
+<hr>
+
+<!-- <h3> Post Requests </h3> -->
