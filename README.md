@@ -37,7 +37,15 @@ https://dl.pstmn.io/download/latest/osx_arm64
 <hr>
 
 <h2>Usage
-    
 </h2>
+
+<li>Paste this Postman link in your browser to view the requests you can make: </li>
+
+```
+https://app.getpostman.com/join-team?invite_code=969a4684da6a66b6ff57b83eeb049cca&target_code=de1c96afc48f36811ff9f904a023471c
+```
+
+<li>Expand the 'Integration Testing' tab to view the titles of the different requests that you make</li>
+![integration testing](image.png)
 
 
