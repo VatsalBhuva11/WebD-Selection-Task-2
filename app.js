@@ -578,13 +578,11 @@ app.post(
 );
 
 //delete a post
-app.delete("/users/:username/:postID", authenticateToken, (req, res) => {
-  const username = req.params.username;
+app.delete("/users/:postID", authenticateToken, (req, res) => {
+  const username = req.username;
   const postID = req.params.postID;
 
-  if (username !== req.username) {
-    res.send("Cannot delete the posts of another user!");
-  } else {
+
     Posts.updateOne(
       { username: username },
       { $pull: { posts: { _id: postID } } }
@@ -599,7 +597,6 @@ app.delete("/users/:username/:postID", authenticateToken, (req, res) => {
       .catch((error) => {
         res.send("Error deleting post:", error);
       });
-  }
 });
 
 //update the password of a user

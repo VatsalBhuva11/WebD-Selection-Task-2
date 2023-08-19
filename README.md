@@ -104,3 +104,34 @@ Let's have a look at the different functionalities of the website, and how to us
 
 <li><ins>Create post:</ins> Share where you've been this summer or your outing with your friends and much more! Head over to the "Body -> form-data" section, and select the image/video that you want to post! Don't forget to add a suitable magical caption to captivate your followers!
 </li><br>
+
+![image](/assets/screenshots/create-post.png)
+
+<li><ins>Like a post:</ins> Show your support to your close ones by liking their posts! Under the "Params" section, enter the username to whom the post belongs, and the ID of the post that you want to like. <strong>NOTE: the postID can be obtained by viewing the posts/profile of that user, and in the posts array will be listed all the posts with each post having a unique "_id" attribute. Copy the inner text (don't copy the ObjectID part) and paste it in the postID attribute.
+(don't be cheeky to like your own post or like the same post twice :) i've got that covered :))
+</li><br>
+
+![image](assets/screenshots/post-id.jpg)
+![image](/assets/screenshots/like-post.png)
+
+<li><ins>Dislike a post: </ins>Same usage as liking a post.
+</li><br>
+
+<li><ins>Comment on a post: </ins>Express (no pun intended) your thoughts on your friend's posts to flatter them :)
+Enter the username and the postID (the same way as in liking a post), and enter your comment in the "Body -> x-www-form-urlencoded" section, under the "comment" attribute.
+</li><br>
+
+![image](/assets/screenshots/comment.png)
+
+<li><ins>View feed: </ins>Following your friends? View what they're upto in your feed! Your feed shows your your following's posts in a randomized order to make it more natural! Just click the send button to view your feed!
+</li><br>
+
+<li><ins>View posts of a user: </ins>View the posts of a specific user by heading over to this section, and entering the username of that user under the "username" attribute, in the "Params" section.
+</li><br>
+
+![image](/assets/screenshots/view-posts.png)
+
+<li><ins>View posts of a user: </ins>View the posts of a specific user by heading over to this section, and entering the username of that user under the "username" attribute, in the "Params" section.
+</li><br>
+
+![image](/assets/screenshots/view-posts.png)
