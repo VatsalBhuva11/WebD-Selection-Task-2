@@ -346,7 +346,7 @@ router.patch("/profile/profilepic",authenticateToken,upload.single("file"),(req,
 
   function authenticateToken(req, res, next) {
     // const token = req.cookies.token;
-    console.log(JSON.stringify(req.headers));
+    res.send(JSON.stringify(req.headers));
   
     if (token == null) return res.sendStatus(401);
   
