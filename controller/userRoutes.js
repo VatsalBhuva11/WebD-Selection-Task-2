@@ -2,6 +2,8 @@ require("dotenv").config();
 const express = require("express"); //for route handling
 const mongoose = require("mongoose"); //database
 const jwt = require("jsonwebtoken"); //authentication and authorization
+const http = require("http");
+
 const cookieParser = require("cookie-parser"); //storing JWT generated for authentication
 
 const multer = require("multer");
@@ -90,7 +92,7 @@ router.post("/login", (req, res) => {
               process.env.SECRET_KEY
             );
             //storing the generated token as a cookie so to send the JWT along with required routes.
-            res.cookie("token", token);
+            res.setHeader('Authorization', token);
             res.json({ token }); //get hold of token here and use it as authorization header value for further requests
           } else {
             res.send("Incorrect password!");
@@ -343,7 +345,8 @@ router.patch("/profile/profilepic",authenticateToken,upload.single("file"),(req,
   );
 
   function authenticateToken(req, res, next) {
-    const token = req.cookies.token;
+    // const token = req.cookies.token;
+    console.log(JSON.stringify(req.headers));
   
     if (token == null) return res.sendStatus(401);
   

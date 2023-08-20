@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express"); //for route handling
 const cookieParser = require("cookie-parser"); //storing JWT generated for authentication
 const jwt = require("jsonwebtoken"); //authentication and authorization
+const http = require("http");
 
 const multer = require("multer");
 
