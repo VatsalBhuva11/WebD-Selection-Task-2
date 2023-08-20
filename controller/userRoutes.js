@@ -315,8 +315,9 @@ router.patch("/profile/profilepic",authenticateToken,upload.single("file"),(req,
       function getLastCharacters(inputString, numCharacters) {
         return inputString.slice(-numCharacters);
       }
-      if (req.file.filename.length === 0){
-        res.send("Please select a profile photo to upload.");
+
+      if (typeof req.file === 'undefined' ){
+        res.send("Please select a file to upload.")
       }
   
       const extension = getLastCharacters(uploadedFileName, 3);
