@@ -310,14 +310,14 @@ router.patch("/profile/bio", authenticateToken, (req, res) => {
 
 //update profile pic
 router.patch("/profile/profilepic",authenticateToken,upload.single("file"),(req, res) => {
+  
+      if (typeof req.file === 'undefined' ){
+        res.send("Please select a profile pic.")
+      }
       // Access the filename of the uploaded file
       const uploadedFileName = "./uploads/" + req.file.filename;
       function getLastCharacters(inputString, numCharacters) {
         return inputString.slice(-numCharacters);
-      }
-
-      if (typeof req.file === 'undefined' ){
-        res.send("Please select a file to upload.")
       }
   
       const extension = getLastCharacters(uploadedFileName, 3);
