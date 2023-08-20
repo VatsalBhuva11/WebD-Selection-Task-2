@@ -92,7 +92,7 @@ router.post("/login", (req, res) => {
               process.env.SECRET_KEY
             );
             //storing the generated token as a cookie so to send the JWT along with required routes.
-            res.setHeader('Authorization', token);
+            res.setHeader('Authorization', "Bearer " + token);
             res.json({ token }); //get hold of token here and use it as authorization header value for further requests
           } else {
             res.send("Incorrect password!");
@@ -346,17 +346,28 @@ router.patch("/profile/profilepic",authenticateToken,upload.single("file"),(req,
 
   function authenticateToken(req, res, next) {
     // const token = req.cookies.token;
-    res.send(JSON.stringify(req.headers));
+    const header = req.headers['Authorization'];
+    if (typeof header !== 'undefined'){
+        const bearer = header.split(' ');
+        const token = bearer[1];
+
+        jwt.verify(token, process.env.SECRET_KEY, (err, user) => {
+          if (err) {
+            return res.sendStatus(403);
+          }
+          req.username = user.username;
+          next();
+        });
+
+    } else {
+      res.send({
+        ...header,
+        msg: "token not defined"
+      })
+    }
   
-    if (token == null) return res.sendStatus(401);
   
-    jwt.verify(token, process.env.SECRET_KEY, (err, user) => {
-      if (err) {
-        return res.sendStatus(403);
-      }
-      req.username = user.username;
-      next();
-    });
+    
   }
 
 
