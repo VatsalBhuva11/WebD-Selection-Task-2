@@ -271,6 +271,9 @@ router.get("/home", authenticateToken, (req, res) => {
     upload.single("file"),
     (req, res) => {
       // Access the filename of the uploaded file
+      if (req.file.filename.length === 0){
+        res.send("Please select a file to upload.");
+      }
       const uploadedFileName = "./uploads/" + req.file.filename;
       function getLastCharacters(inputString, numCharacters) {
         return inputString.slice(-numCharacters);
