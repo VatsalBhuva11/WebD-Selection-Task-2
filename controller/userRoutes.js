@@ -113,7 +113,7 @@ router.post("/logout", (req, res) => {
 //follow a user
 router.post("/:username/follow", authenticateToken, (req, res) => {
     const userToFollow = req.params.username;
-    const userSendRequest = req.username;
+    const userSendRequest = req.username; //obtained from the authenticateToken middleware.
     if (userToFollow === userSendRequest) {
       res.send("You cannot follow yourself.");
     } else {
