@@ -1,5 +1,3 @@
-# WebD-Selection-Task-2
-
 <ins>**Name**</ins>: Vatsal Bhuva <br />
 <ins>**Enrollment Number**</ins>: IIT2022004 <br />
 <ins>**WhatsApp Number**</ins>: 7041741104 <br />
